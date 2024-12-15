@@ -19,6 +19,10 @@ $ sisyphus <index.gmi >index.html
 ## from go
 
 ```
+// html
 sisyphus.Gem(os.Stdin, os.Stdout, &sisyphus.Html{})
+
+// markdown
+sisyphus.Gem(os.Stdin, os.Stdout, &sisyphus.Markdown{})
 ```
 
