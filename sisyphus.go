@@ -55,14 +55,14 @@ func Gem(r io.Reader, w io.Writer, flavor Flavor) {
 			fmt.Fprintln(w, flavor.Pre(line))
 		case strings.HasPrefix(line, "* "):
 			if !list {
-				fmt.Fprintln(w, flavor.OpenList())
+				fmt.Fprintf(w, flavor.OpenList())
 				list = true
 			}
 			text := strings.TrimSpace(strings.TrimPrefix(line, "*"))
 			fmt.Fprintf(w, flavor.ListItem(text))
 		case strings.HasPrefix(line, ">"):
 			if !quote {
-				fmt.Fprintln(w, flavor.OpenQuote())
+				fmt.Fprintf(w, flavor.OpenQuote())
 				quote = true
 			} else {
 				fmt.Fprintf(w, flavor.Line("", true))
@@ -95,11 +95,12 @@ func Gem(r io.Reader, w io.Writer, flavor Flavor) {
 			}
 		case strings.TrimSpace(line) == "":
 			text = false
+			fmt.Fprintln(w, "")
 		default:
 			if text {
 				fmt.Fprintf(w, flavor.Line(line, true))
 			} else {
-				fmt.Fprintf(w, flavor.Paragraph(line))
+				fmt.Fprintln(w, flavor.Paragraph(line))
 				text = true
 			}
 		}
