@@ -12,11 +12,11 @@ func escape(raw string) string {
 type Html struct{}
 
 func (html Html) Link(url string, text string) string {
-	return fmt.Sprintf("<a href='%s'>%s</a>\n", escape(url), escape(text))
+	return fmt.Sprintf("<a href='%s'>%s</a>", escape(url), escape(text))
 }
 
 func (html Html) Image(url string) string {
-	return fmt.Sprintf("<img src='%s' alt>\n", escape(url))
+	return fmt.Sprintf("<img src='%s' alt>", escape(url))
 }
 
 func (html Html) Header(level int, text string) string {
@@ -24,7 +24,7 @@ func (html Html) Header(level int, text string) string {
 }
 
 func (html Html) Paragraph(text string) string {
-	return fmt.Sprintf("<p>%s\n", escape(text))
+	return fmt.Sprintf("<p>%s", escape(text))
 }
 
 func (html Html) Line(text string, nl bool) string {
