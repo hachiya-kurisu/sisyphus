@@ -18,12 +18,12 @@ func (html Html) Header(level int, text string) string {
 	return fmt.Sprintf("<h%d>%s</h%d>\n", level, escape(text), level)
 }
 
-func (html Html) Link(url string, text string) string {
+func (html Html) Link(url string, text string, ongoing bool) string {
 	if html.Images && strings.HasSuffix(text, "(image)") {
 		text = strings.TrimSpace(strings.TrimSuffix(text, "(image)"))
-		return fmt.Sprintf("<img src='%s' alt='%s'>", escape(url), escape(text))
+		return fmt.Sprintf("<p><img src='%s' alt='%s'>", escape(url), escape(text))
 	} else {
-		return fmt.Sprintf("<a href='%s'>%s</a>", escape(url), escape(text))
+		return fmt.Sprintf("<p><a href='%s'>%s</a>", escape(url), escape(text))
 	}
 }
 
@@ -33,6 +33,10 @@ func (html Html) ListItem(text string) string {
 
 func (html Html) Pre(text string) string {
 	return escape(text)
+}
+
+func (html Html) Quote(text string, ongoing bool) string {
+	return html.Text(text, ongoing)
 }
 
 func (html Html) Text(text string, ongoing bool) string {
@@ -47,7 +51,7 @@ func (html Html) ToggleList(open bool) string {
 	if open {
 		return "<ul>\n"
 	} else {
-		return "</ul>\n"
+		return "</ul>"
 	}
 }
 
@@ -55,7 +59,7 @@ func (html Html) TogglePre(open bool) string {
 	if open {
 		return "<pre>"
 	} else {
-		return "</pre>\n"
+		return "</pre>"
 	}
 }
 
@@ -63,6 +67,6 @@ func (html Html) ToggleQuote(open bool) string {
 	if open {
 		return "<blockquote>\n"
 	} else {
-		return "</blockquote>\n"
+		return "</blockquote>"
 	}
 }

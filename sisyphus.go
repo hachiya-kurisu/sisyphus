@@ -11,10 +11,11 @@ const Version = "0.0.5"
 
 type Flavor interface {
 	Header(level int, text string) string
-	Link(url string, text string) string
+	Link(url string, text string, ongoing bool) string
 	ListItem(text string) string
 	Pre(text string) string
-	Text(text string, nl bool) string
+	Quote(text string, ongoing bool) string
+	Text(text string, ongoing bool) string
 	ToggleList(open bool) string
 	TogglePre(open bool) string
 	ToggleQuote(open bool) string
@@ -50,32 +51,34 @@ func Gem(r io.Reader, w io.Writer, flavor Flavor) {
 				fmt.Fprintf(w, flavor.ToggleList(true))
 				list = true
 			}
-			text := strings.TrimSpace(strings.TrimPrefix(line, "*"))
-			fmt.Fprintf(w, flavor.ListItem(text))
+			raw := strings.TrimSpace(strings.TrimPrefix(line, "*"))
+			fmt.Fprintf(w, flavor.ListItem(raw))
 		case strings.HasPrefix(line, ">"):
 			if !quote {
 				fmt.Fprintf(w, flavor.ToggleQuote(true))
 			}
-			text := strings.TrimSpace(strings.TrimPrefix(line, ">"))
-			fmt.Fprintln(w, flavor.Text(text, quote))
+			raw := strings.TrimSpace(strings.TrimPrefix(line, ">"))
+			fmt.Fprintln(w, flavor.Quote(raw, quote))
 			quote = true
 		case strings.HasPrefix(line, "###"):
-			text := strings.TrimSpace(strings.TrimPrefix(line, "###"))
-			fmt.Fprintf(w, flavor.Header(3, text))
+			raw := strings.TrimSpace(strings.TrimPrefix(line, "###"))
+			fmt.Fprintf(w, flavor.Header(3, raw))
 		case strings.HasPrefix(line, "##"):
-			text := strings.TrimSpace(strings.TrimPrefix(line, "##"))
-			fmt.Fprintf(w, flavor.Header(2, text))
+			raw := strings.TrimSpace(strings.TrimPrefix(line, "##"))
+			fmt.Fprintf(w, flavor.Header(2, raw))
 		case strings.HasPrefix(line, "#"):
-			text := strings.TrimSpace(strings.TrimPrefix(line, "#"))
-			fmt.Fprintf(w, flavor.Header(1, text))
+			raw := strings.TrimSpace(strings.TrimPrefix(line, "#"))
+			fmt.Fprintf(w, flavor.Header(1, raw))
 		case strings.HasPrefix(line, "=>"):
 			link := strings.TrimSpace(strings.TrimPrefix(line, "=>"))
 			parts := strings.SplitN(link, " ", 2)
 			if len(parts) == 1 {
-				fmt.Fprintln(w, flavor.Link(parts[0], parts[0]))
+				fmt.Fprintln(w, flavor.Link(parts[0], parts[0], text))
 			} else {
-				fmt.Fprintln(w, flavor.Link(parts[0], strings.TrimSpace(parts[1])))
+				link := flavor.Link(parts[0], strings.TrimSpace(parts[1]), text)
+				fmt.Fprintln(w, link)
 			}
+			text = true
 		case strings.TrimSpace(line) == "":
 			text = false
 			fmt.Fprintln(w, "")

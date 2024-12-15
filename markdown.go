@@ -13,7 +13,7 @@ func (md Markdown) Header(level int, text string) string {
 	return fmt.Sprintf("%s %s\n", strings.Repeat("#", level), text)
 }
 
-func (md Markdown) Link(url string, text string) string {
+func (md Markdown) Link(url string, text string, ongoing bool) string {
 	if md.Images && strings.HasSuffix(text, "(image)") {
 		text = strings.TrimSpace(strings.TrimSuffix(text, "(image)"))
 		return fmt.Sprintf("![%s](%s)", text, url)
@@ -23,7 +23,7 @@ func (md Markdown) Link(url string, text string) string {
 }
 
 func (md Markdown) ListItem(text string) string {
-	return fmt.Sprintf("* %s\n", text)
+	return fmt.Sprintf("* %s", text)
 }
 
 func (md Markdown) Pre(text string) string {
@@ -32,6 +32,10 @@ func (md Markdown) Pre(text string) string {
 
 func (md Markdown) Text(text string, ongoing bool) string {
 	return text
+}
+
+func (md Markdown) Quote(text string, ongoing bool) string {
+	return "> " + text
 }
 
 func (md Markdown) ToggleList(open bool) string {
