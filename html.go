@@ -23,15 +23,11 @@ func (html Html) Header(level int, text string) string {
 	return fmt.Sprintf("<h%d>%s</h%d>\n", level, escape(text), level)
 }
 
-func (html Html) Paragraph(text string) string {
-	return fmt.Sprintf("<p>%s", escape(text))
-}
-
-func (html Html) Line(text string, nl bool) string {
-	if nl {
+func (html Html) Text(text string, ongoing bool) string {
+	if ongoing {
 		return fmt.Sprintf("<br>\n%s\n", escape(text))
 	} else {
-		return fmt.Sprintf("%s\n", escape(text))
+		return fmt.Sprintf("<p>%s", escape(text))
 	}
 }
 
@@ -43,26 +39,26 @@ func (html Html) ListItem(text string) string {
 	return fmt.Sprintf("<li>%s\n", escape(text))
 }
 
-func (html Html) OpenList() string {
-	return "<ul>"
+func (html Html) TogglePre(open bool) string {
+	if open {
+		return "<pre>"
+	} else {
+		return "</pre>"
+	}
 }
 
-func (html Html) CloseList() string {
-	return "</ul>"
+func (html Html) ToggleList(open bool) string {
+	if open {
+		return "<ul>"
+	} else {
+		return "</ul>"
+	}
 }
 
-func (html Html) OpenQuote() string {
-	return "<blockquote>"
-}
-
-func (html Html) CloseQuote() string {
-	return "</blockquote>"
-}
-
-func (html Html) OpenPre() string {
-	return "<pre>"
-}
-
-func (html Html) ClosePre() string {
-	return "</pre>"
+func (html Html) ToggleQuote(open bool) string {
+	if open {
+		return "<blockquote>"
+	} else {
+		return "</blockquote>"
+	}
 }
