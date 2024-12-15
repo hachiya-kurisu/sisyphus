@@ -11,18 +11,26 @@ func escape(raw string) string {
 }
 
 type Html struct {
-	Images bool
+	Extended bool
 }
 
 func (html Html) Header(level int, text string) string {
 	return fmt.Sprintf("<h%d>%s</h%d>\n", level, escape(text), level)
 }
 
+func (html Html) video(url string, text string) string {
+	return fmt.Sprintf("<video controls src='%s' title='%s'></video>", url, text)
+}
+
 func (html Html) Link(url string, text string, ongoing bool) string {
-	if html.Images && strings.HasSuffix(text, "(image)") {
+	switch {
+	case html.Extended && strings.HasSuffix(text, "(image)"):
 		text = strings.TrimSpace(strings.TrimSuffix(text, "(image)"))
 		return fmt.Sprintf("<p><img src='%s' alt='%s'>", escape(url), escape(text))
-	} else {
+	case html.Extended && strings.HasSuffix(text, "(video)"):
+		text = strings.TrimSpace(strings.TrimSuffix(text, "(video)"))
+		return html.video(escape(url), escape(text))
+	default:
 		return fmt.Sprintf("<p><a href='%s'>%s</a>", escape(url), escape(text))
 	}
 }

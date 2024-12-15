@@ -14,6 +14,7 @@ var htmlcases = [][]string{
 	{"* 1\n> 2", "<ul>\n<li>1\n</ul>\n<blockquote>\n<p>2\n</blockquote>\n"},
 	{"=> link", "<p><a href='link'>link</a>\n"},
 	{"=> src oh hay (image)", "<p><img src='src' alt='oh hay'>\n"},
+	{"=> vid (video)", "<video controls src='vid' title=''></video>\n"},
 	{"> hello\n> hm", "<blockquote>\n<p>hello\n<br>\nhm\n</blockquote>\n"},
 	{"> hello\nhm", "<blockquote>\n<p>hello\n</blockquote>\n<p>hm\n"},
 	{"```\npre", "<pre>\npre\n</pre>\n"},
@@ -39,7 +40,7 @@ func TestHtml(t *testing.T) {
 		Gem(
 			strings.NewReader(c[0]),
 			&out,
-			&Html{Images: true},
+			&Html{Extended: true},
 		)
 		if out.String() != c[1] {
 			t.Errorf("%s should be %s", out.String(), c[1])
@@ -53,7 +54,7 @@ func TestMarkdown(t *testing.T) {
 		Gem(
 			strings.NewReader(c[0]),
 			&out,
-			&Markdown{Images: true},
+			&Markdown{Extended: true},
 		)
 		if out.String() != c[1] {
 			t.Errorf("%s should be %s", out.String(), c[1])

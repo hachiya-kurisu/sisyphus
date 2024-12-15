@@ -6,7 +6,7 @@ import (
 )
 
 type Markdown struct {
-	Images bool
+	Extended bool
 }
 
 func (md Markdown) Header(level int, text string) string {
@@ -14,10 +14,11 @@ func (md Markdown) Header(level int, text string) string {
 }
 
 func (md Markdown) Link(url string, text string, ongoing bool) string {
-	if md.Images && strings.HasSuffix(text, "(image)") {
+	switch {
+	case md.Extended && strings.HasSuffix(text, "(image)"):
 		text = strings.TrimSpace(strings.TrimSuffix(text, "(image)"))
 		return fmt.Sprintf("![%s](%s)", text, url)
-	} else {
+	default:
 		return fmt.Sprintf("[%s](%s)", text, url)
 	}
 }
