@@ -10,15 +10,15 @@ import (
 const Version = "0.0.3"
 
 type Flavor interface {
-	Link(url string, text string) string
-	ToggleList(open bool) string
-	ToggleQuote(open bool) string
-	TogglePre(open bool) string
-	Pre(text string) string
-	ListItem(text string) string
-	Text(text string, nl bool) string
 	Header(level int, text string) string
 	Image(url string) string
+	Link(url string, text string) string
+	ListItem(text string) string
+	Pre(text string) string
+	Text(text string, nl bool) string
+	ToggleList(open bool) string
+	TogglePre(open bool) string
+	ToggleQuote(open bool) string
 }
 
 func Gem(r io.Reader, w io.Writer, flavor Flavor) {
