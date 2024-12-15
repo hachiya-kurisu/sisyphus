@@ -19,6 +19,11 @@ fmt:
 	gofmt -s -w *.go
 	gofmt -s -w cmd/sisyphus/main.go
 
+doc: README.md
+
+README.md: README.gmi
+	./sisyphus -f markdown <README.gmi >README.md
+
 release: push
 	git push github --tags
 
