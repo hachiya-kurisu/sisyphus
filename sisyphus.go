@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-const Version = "0.0.1"
+const Version = "0.0.2"
 
 type Flavor interface {
 	Link(url string, text string) string
