@@ -1,8 +1,8 @@
 package sisyphus
 
 import (
-	"testing"
 	"strings"
+	"testing"
 )
 
 var htmlcases = [][]string{
@@ -33,7 +33,6 @@ var mdcases = [][]string{
 	{"```\npre", "```\npre\n```\n"},
 }
 
-
 func TestHtml(t *testing.T) {
 	for _, c := range htmlcases {
 		var out strings.Builder
@@ -61,4 +60,3 @@ func TestMarkdown(t *testing.T) {
 		}
 	}
 }
-
