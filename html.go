@@ -10,7 +10,7 @@ func escape(raw string) string {
 	return html.EscapeString(raw)
 }
 
-type Html struct{
+type Html struct {
 	Images bool
 }
 
@@ -37,7 +37,7 @@ func (html Html) Pre(text string) string {
 
 func (html Html) Text(text string, ongoing bool) string {
 	if ongoing {
-		return fmt.Sprintf("<br>\n%s\n", escape(text))
+		return fmt.Sprintf("<br>\n%s", escape(text))
 	} else {
 		return fmt.Sprintf("<p>%s", escape(text))
 	}
@@ -45,9 +45,9 @@ func (html Html) Text(text string, ongoing bool) string {
 
 func (html Html) ToggleList(open bool) string {
 	if open {
-		return "<ul>"
+		return "<ul>\n"
 	} else {
-		return "</ul>"
+		return "</ul>\n"
 	}
 }
 
@@ -55,14 +55,14 @@ func (html Html) TogglePre(open bool) string {
 	if open {
 		return "<pre>"
 	} else {
-		return "</pre>"
+		return "</pre>\n"
 	}
 }
 
 func (html Html) ToggleQuote(open bool) string {
 	if open {
-		return "<blockquote>"
+		return "<blockquote>\n"
 	} else {
-		return "</blockquote>"
+		return "</blockquote>\n"
 	}
 }

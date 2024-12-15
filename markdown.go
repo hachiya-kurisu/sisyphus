@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-type Markdown struct{
+type Markdown struct {
 	Images bool
 }
 
