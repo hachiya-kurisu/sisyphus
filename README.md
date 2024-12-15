@@ -13,3 +13,10 @@ convert gemtext to html:
 ```
 $ sisyphus <index.gmi >index.html
 ```
+
+## from go
+
+```
+sisyphus.Gem(os.Stdin, os.Stdout, &sisyphus.Html{})
+```
+
