@@ -2,6 +2,8 @@
 
 convert gemtext to html/markdown
 
+(api, interfaces, cli tool - everything is likely to change drastically 😂
+
 ## cli usage
 
 create a markdown readme from gemtext:
