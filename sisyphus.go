@@ -80,7 +80,7 @@ func Gem(r io.Reader, w io.Writer, flavor Flavor) {
 			text = false
 			fmt.Fprintln(w, "")
 		default:
-			fmt.Fprintf(w, flavor.Text(line, text))
+			fmt.Fprintln(w, flavor.Text(line, text))
 			text = true
 		}
 	}
@@ -88,11 +88,9 @@ func Gem(r io.Reader, w io.Writer, flavor Flavor) {
 	// close any remaining open tags
 	if list {
 		fmt.Fprintln(w, flavor.ToggleList(false))
-	}
-	if quote {
+	} else if quote {
 		fmt.Fprintln(w, flavor.ToggleQuote(false))
-	}
-	if pre {
+	} else if pre {
 		fmt.Fprintln(w, flavor.TogglePre(false))
 	}
 }
