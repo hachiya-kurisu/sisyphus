@@ -21,6 +21,7 @@ type Flavor interface {
 	ToggleQuote(open bool) string
 }
 
+//gocyclo:ignore
 func Gem(r io.Reader, w io.Writer, flavor Flavor) {
 	var text, quote, list, pre bool
 
