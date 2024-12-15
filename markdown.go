@@ -5,7 +5,9 @@ import (
 	"strings"
 )
 
-type Markdown struct{}
+type Markdown struct{
+	Images bool
+}
 
 func (md Markdown) Header(level int, text string) string {
 	return fmt.Sprintf("%s %s\n", strings.Repeat("#", level), text)

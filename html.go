@@ -3,13 +3,16 @@ package sisyphus
 import (
 	"fmt"
 	"html"
+	"strings"
 )
 
 func escape(raw string) string {
 	return html.EscapeString(raw)
 }
 
-type Html struct{}
+type Html struct{
+	Images bool
+}
 
 func (html Html) Header(level int, text string) string {
 	return fmt.Sprintf("<h%d>%s</h%d>\n", level, escape(text), level)
@@ -20,7 +23,11 @@ func (html Html) Image(url string) string {
 }
 
 func (html Html) Link(url string, text string) string {
-	return fmt.Sprintf("<a href='%s'>%s</a>", escape(url), escape(text))
+	if html.Images && strings.HasSuffix(url, ".jpg") {
+		return fmt.Sprintf("<img src='%s' alt='%s'>", escape(url), escape(text))
+	} else {
+		return fmt.Sprintf("<a href='%s'>%s</a>", escape(url), escape(text))
+	}
 }
 
 func (html Html) ListItem(text string) string {

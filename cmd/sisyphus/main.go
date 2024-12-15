@@ -9,6 +9,7 @@ import (
 
 func main() {
 	v := flag.Bool("v", false, "version")
+	i := flag.Bool("i", false, "allow images")
 	f := flag.String("f", "html", "choose flavor (html/markdown)")
 	flag.Parse()
 
@@ -20,9 +21,13 @@ func main() {
 	var flavor sisyphus.Flavor
 	switch *f {
 	case "html":
-		flavor = &sisyphus.Html{}
+		flavor = &sisyphus.Html{
+			Images: *i,
+		}
 	case "markdown":
-		flavor = &sisyphus.Markdown{}
+		flavor = &sisyphus.Markdown{
+			Images: *i,
+		}
 	}
 	sisyphus.Gem(os.Stdin, os.Stdout, flavor)
 }
