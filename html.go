@@ -18,12 +18,9 @@ func (html Html) Header(level int, text string) string {
 	return fmt.Sprintf("<h%d>%s</h%d>\n", level, escape(text), level)
 }
 
-func (html Html) Image(url string) string {
-	return fmt.Sprintf("<img src='%s' alt>", escape(url))
-}
-
 func (html Html) Link(url string, text string) string {
-	if html.Images && strings.HasSuffix(url, ".jpg") {
+	if html.Images && strings.HasSuffix(text, "(image)") {
+		text = strings.TrimSpace(strings.TrimSuffix(text, "(image)"))
 		return fmt.Sprintf("<img src='%s' alt='%s'>", escape(url), escape(text))
 	} else {
 		return fmt.Sprintf("<a href='%s'>%s</a>", escape(url), escape(text))

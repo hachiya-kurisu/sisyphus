@@ -11,7 +11,6 @@ const Version = "0.0.4"
 
 type Flavor interface {
 	Header(level int, text string) string
-	Image(url string) string
 	Link(url string, text string) string
 	ListItem(text string) string
 	Pre(text string) string
