@@ -23,8 +23,14 @@ func (html *Html) Header(level int, text string) string {
 	return fmt.Sprintf("<h%d>%s</h%d>\n", level, escape(text), level)
 }
 
-func (html *Html) video(url string, text string) string {
+func (html *Html) video(url string, text string, suffix string) string {
+	text = strings.TrimSpace(strings.TrimSuffix(text, suffix))
 	return fmt.Sprintf("<video controls src='%s' title='%s'></video>", url, text)
+}
+
+func (html *Html) audio(url string, text string, suffix string) string {
+	text = strings.TrimSpace(strings.TrimSuffix(text, suffix))
+	return fmt.Sprintf("<audio controls src='%s' title='%s'></audio>", url, text)
 }
 
 func (html *Html) image(uri string, text string, suffix string) string {
@@ -48,8 +54,13 @@ func (html *Html) Link(url string, text string) string {
 	case html.Extended && strings.HasSuffix(url, ".jpg"):
 		return html.image(escape(url), escape(text), "")
 	case html.Extended && strings.HasSuffix(text, "(video)"):
-		text = strings.TrimSpace(strings.TrimSuffix(text, "(video)"))
-		return html.video(escape(url), escape(text))
+		return html.video(escape(url), escape(text), "(video)")
+	case html.Extended && strings.HasSuffix(url, ".mp4"):
+		return html.video(escape(url), escape(text), "")
+	case html.Extended && strings.HasSuffix(text, "(audio)"):
+		return html.audio(escape(url), escape(text), "(audio)")
+	case html.Extended && strings.HasSuffix(url, ".m4a"):
+		return html.audio(escape(url), escape(text), "")
 	default:
 		if text == "" {
 			text = url
