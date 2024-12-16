@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-const Version = "0.0.9"
+const Version = "0.1.0"
 
 type Flavor interface {
 	Header(level int, text string) string
