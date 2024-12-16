@@ -8,6 +8,33 @@ import (
 	"strings"
 )
 
+type MediaHandler func(*Html, string, string, string) string
+
+type MediaRule struct {
+	Tag     string
+	Handler MediaHandler
+}
+
+var Keywords = [...]MediaRule{
+	{"(image)", (*Html).image},
+	{"(photo)", (*Html).image},
+	{"(photograph)", (*Html).image},
+	{"(picture)", (*Html).image},
+	{"(video)", (*Html).video},
+	{"(audio)", (*Html).audio},
+	{"(music)", (*Html).audio},
+}
+
+var Extensions = [...]MediaRule{
+	{".jpg", (*Html).image},
+	{".png", (*Html).image},
+	{".gif", (*Html).image},
+	{".mp4", (*Html).video},
+	{".m4a", (*Html).audio},
+	{".mp3", (*Html).audio},
+	{".ogg", (*Html).audio},
+}
+
 func escape(raw string) string {
 	return html.EscapeString(raw)
 }
@@ -46,27 +73,22 @@ func (html *Html) image(uri string, text string, suffix string) string {
 }
 
 func (html *Html) Link(url string, text string) string {
-	switch {
-	case html.Extended && strings.HasSuffix(text, "(image)"):
-		return html.image(escape(url), escape(text), "(image)")
-	case html.Extended && strings.HasSuffix(text, "(photograph)"):
-		return html.image(escape(url), escape(text), "(photograph)")
-	case html.Extended && strings.HasSuffix(url, ".jpg"):
-		return html.image(escape(url), escape(text), "")
-	case html.Extended && strings.HasSuffix(text, "(video)"):
-		return html.video(escape(url), escape(text), "(video)")
-	case html.Extended && strings.HasSuffix(url, ".mp4"):
-		return html.video(escape(url), escape(text), "")
-	case html.Extended && strings.HasSuffix(text, "(audio)"):
-		return html.audio(escape(url), escape(text), "(audio)")
-	case html.Extended && strings.HasSuffix(url, ".m4a"):
-		return html.audio(escape(url), escape(text), "")
-	default:
-		if text == "" {
-			text = url
+	if html.Extended {
+		for _, kw := range Keywords {
+			if strings.HasSuffix(text, kw.Tag) {
+				return kw.Handler(html, escape(url), escape(text), kw.Tag)
+			}
 		}
-		return fmt.Sprintf("<a href='%s'>%s</a>", escape(url), escape(text))
+		for _, ext := range Extensions {
+			if strings.HasSuffix(url, ext.Tag) {
+				return ext.Handler(html, escape(url), escape(text), "")
+			}
+		}
 	}
+	if text == "" {
+		text = url
+	}
+	return fmt.Sprintf("<a href='%s'>%s</a>", escape(url), escape(text))
 }
 
 func (html *Html) ListItem(text string) string {
