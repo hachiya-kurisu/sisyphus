@@ -55,7 +55,7 @@ func (md *Markdown) SetState(state State) string {
 	var closing, opening string
 	switch md.State {
 	case Pre:
-		closing = "```"
+		closing = "```\n"
 	}
 	switch state {
 	case Pre:
