@@ -20,7 +20,6 @@ type Flavor interface {
 	GetState() State
 }
 
-// states
 type State int
 
 const (
@@ -32,10 +31,7 @@ const (
 )
 
 func Gem(r io.Reader, w io.Writer, flavor Flavor) {
-	flavor.SetState(None)
-
 	scanner := bufio.NewScanner(r)
-
 	for scanner.Scan() {
 		line := scanner.Text()
 		switch {
