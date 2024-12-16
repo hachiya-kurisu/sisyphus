@@ -24,5 +24,8 @@ sisyphus.Cook(os.Stdin, os.Stdout, &sisyphus.Html{})
 
 // markdown
 sisyphus.Cook(os.Stdin, os.Stdout, &sisyphus.Markdown{})
+
+// convert from a string
+sisyphus.Convert("=> somewhere a link", &sisyphus.Html{})
 ```
 
