@@ -62,3 +62,15 @@ func TestMarkdown(t *testing.T) {
 		}
 	}
 }
+
+func TestAspeq(t *testing.T) {
+	var out strings.Builder
+	Gem(
+		strings.NewReader("=> ume.jpg 梅ちゃん (image)"),
+		&out,
+		&Html{Extended: true, Aspeq: true},
+	)
+	if out.String() != "<p><img src='ume.jpg' class=super16 alt='梅ちゃん'>\n" {
+		t.Errorf("[%s] should be [%s]", out.String(), "lol")
+	}
+}
