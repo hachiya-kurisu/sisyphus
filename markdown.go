@@ -7,13 +7,18 @@ import (
 
 type Markdown struct {
 	Extended bool
+	Current  string
+	State    State
 }
 
-func (md Markdown) Header(level int, text string) string {
+func (md *Markdown) Header(level int, text string) string {
 	return fmt.Sprintf("%s %s\n", strings.Repeat("#", level), text)
 }
 
-func (md Markdown) Link(url string, text string, ongoing bool) string {
+func (md *Markdown) Link(url string, text string) string {
+	if text == "" {
+		text = url
+	}
 	switch {
 	case md.Extended && strings.HasSuffix(text, "(image)"):
 		text = strings.TrimSpace(strings.TrimSuffix(text, "(image)"))
@@ -23,30 +28,39 @@ func (md Markdown) Link(url string, text string, ongoing bool) string {
 	}
 }
 
-func (md Markdown) ListItem(text string) string {
-	return fmt.Sprintf("* %s", text)
+func (md *Markdown) ListItem(text string) string {
+	return fmt.Sprintf("* %s\n", text)
 }
 
-func (md Markdown) Pre(text string) string {
+func (md *Markdown) Pre(text string) string {
 	return text
 }
 
-func (md Markdown) Text(text string, ongoing bool) string {
+func (md *Markdown) Text(text string) string {
 	return text
 }
 
-func (md Markdown) Quote(text string, ongoing bool) string {
+func (md *Markdown) Quote(text string) string {
 	return "> " + text
 }
 
-func (md Markdown) ToggleList(open bool) string {
-	return ""
+func (md *Markdown) GetState() State {
+	return md.State
 }
 
-func (md Markdown) TogglePre(open bool) string {
-	return "```"
-}
-
-func (md Markdown) ToggleQuote(open bool) string {
-	return ""
+func (md *Markdown) SetState(state State) string {
+	if state == md.State {
+		return ""
+	}
+	var closing, opening string
+	switch md.State {
+	case Pre:
+		closing = "```"
+	}
+	switch state {
+	case Pre:
+		opening = "```\n"
+	}
+	md.State = state
+	return closing + opening
 }

@@ -7,59 +7,54 @@ import (
 	"strings"
 )
 
-const Version = "0.0.5"
+const Version = "0.0.6"
 
 type Flavor interface {
 	Header(level int, text string) string
-	Link(url string, text string, ongoing bool) string
+	Link(url string, text string) string
 	ListItem(text string) string
 	Pre(text string) string
-	Quote(text string, ongoing bool) string
-	Text(text string, ongoing bool) string
-	ToggleList(open bool) string
-	TogglePre(open bool) string
-	ToggleQuote(open bool) string
+	Quote(text string) string
+	Text(text string) string
+	SetState(state State) string
+	GetState() State
 }
 
-//gocyclo:ignore
+// states
+type State int
+
+const (
+	None State = iota + 1
+	Text
+	List
+	Pre
+	Quote
+)
+
 func Gem(r io.Reader, w io.Writer, flavor Flavor) {
-	var text, quote, list, pre bool
+	flavor.SetState(None)
 
 	scanner := bufio.NewScanner(r)
 
 	for scanner.Scan() {
 		line := scanner.Text()
-
-		// close open lists and quotes if necessary
-		if list && !strings.HasPrefix(line, "* ") {
-			fmt.Fprintln(w, flavor.ToggleList(false))
-			list = false
-		}
-		if quote && !strings.HasPrefix(line, ">") {
-			fmt.Fprintln(w, flavor.ToggleQuote(false))
-			quote = false
-		}
-
 		switch {
 		case strings.HasPrefix(line, "```"):
-			pre = !pre
-			fmt.Fprintln(w, flavor.TogglePre(pre))
-		case pre:
+			if flavor.GetState() == Pre {
+				fmt.Fprintf(w, flavor.SetState(None))
+			} else {
+				fmt.Fprintf(w, flavor.SetState(Pre))
+			}
+		case flavor.GetState() == Pre:
 			fmt.Fprintln(w, flavor.Pre(line))
 		case strings.HasPrefix(line, "* "):
-			if !list {
-				fmt.Fprintf(w, flavor.ToggleList(true))
-				list = true
-			}
+			fmt.Fprintf(w, flavor.SetState(List))
 			raw := strings.TrimSpace(strings.TrimPrefix(line, "*"))
 			fmt.Fprintf(w, flavor.ListItem(raw))
 		case strings.HasPrefix(line, ">"):
-			if !quote {
-				fmt.Fprintf(w, flavor.ToggleQuote(true))
-			}
+			fmt.Fprintf(w, flavor.SetState(Quote))
 			raw := strings.TrimSpace(strings.TrimPrefix(line, ">"))
-			fmt.Fprintln(w, flavor.Quote(raw, quote))
-			quote = true
+			fmt.Fprintln(w, flavor.Quote(raw))
 		case strings.HasPrefix(line, "###"):
 			raw := strings.TrimSpace(strings.TrimPrefix(line, "###"))
 			fmt.Fprintf(w, flavor.Header(3, raw))
@@ -71,29 +66,16 @@ func Gem(r io.Reader, w io.Writer, flavor Flavor) {
 			fmt.Fprintf(w, flavor.Header(1, raw))
 		case strings.HasPrefix(line, "=>"):
 			link := strings.TrimSpace(strings.TrimPrefix(line, "=>"))
-			parts := strings.SplitN(link, " ", 2)
-			if len(parts) == 1 {
-				fmt.Fprintln(w, flavor.Link(parts[0], parts[0], text))
-			} else {
-				link := flavor.Link(parts[0], strings.TrimSpace(parts[1]), text)
-				fmt.Fprintln(w, link)
-			}
-			text = true
+			url, text, _ := strings.Cut(link, " ")
+			fmt.Fprintf(w, flavor.SetState(Text))
+			fmt.Fprintln(w, flavor.Link(url, strings.TrimSpace(text)))
 		case strings.TrimSpace(line) == "":
-			text = false
+			fmt.Fprintf(w, flavor.SetState(None))
 			fmt.Fprintln(w, "")
 		default:
-			fmt.Fprintln(w, flavor.Text(line, text))
-			text = true
+			fmt.Fprintf(w, flavor.SetState(Text))
+			fmt.Fprintln(w, flavor.Text(line))
 		}
 	}
-
-	// close any remaining open tags
-	if list {
-		fmt.Fprintln(w, flavor.ToggleList(false))
-	} else if quote {
-		fmt.Fprintln(w, flavor.ToggleQuote(false))
-	} else if pre {
-		fmt.Fprintln(w, flavor.TogglePre(false))
-	}
+	fmt.Fprintf(w, flavor.SetState(None))
 }

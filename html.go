@@ -12,69 +12,81 @@ func escape(raw string) string {
 
 type Html struct {
 	Extended bool
+	Current  string
+	State    State
 }
 
-func (html Html) Header(level int, text string) string {
+func (html *Html) Header(level int, text string) string {
 	return fmt.Sprintf("<h%d>%s</h%d>\n", level, escape(text), level)
 }
 
-func (html Html) video(url string, text string) string {
+func (html *Html) video(url string, text string) string {
 	return fmt.Sprintf("<video controls src='%s' title='%s'></video>", url, text)
 }
 
-func (html Html) Link(url string, text string, ongoing bool) string {
+func (html *Html) Link(url string, text string) string {
+	if text == "" {
+		text = url
+	}
 	switch {
 	case html.Extended && strings.HasSuffix(text, "(image)"):
 		text = strings.TrimSpace(strings.TrimSuffix(text, "(image)"))
-		return fmt.Sprintf("<p><img src='%s' alt='%s'>", escape(url), escape(text))
+		return fmt.Sprintf("<img src='%s' alt='%s'>", escape(url), escape(text))
 	case html.Extended && strings.HasSuffix(text, "(video)"):
 		text = strings.TrimSpace(strings.TrimSuffix(text, "(video)"))
 		return html.video(escape(url), escape(text))
 	default:
-		return fmt.Sprintf("<p><a href='%s'>%s</a>", escape(url), escape(text))
+		return fmt.Sprintf("<a href='%s'>%s</a>", escape(url), escape(text))
 	}
 }
 
-func (html Html) ListItem(text string) string {
+func (html *Html) ListItem(text string) string {
 	return fmt.Sprintf("<li>%s\n", escape(text))
 }
 
-func (html Html) Pre(text string) string {
+func (html *Html) Pre(text string) string {
 	return escape(text)
 }
 
-func (html Html) Quote(text string, ongoing bool) string {
-	return html.Text(text, ongoing)
+func (html *Html) Quote(text string) string {
+	return html.Text(text)
 }
 
-func (html Html) Text(text string, ongoing bool) string {
-	if ongoing {
-		return fmt.Sprintf("<br>\n%s", escape(text))
-	} else {
-		return fmt.Sprintf("<p>%s", escape(text))
-	}
+func (html *Html) Text(text string) string {
+	return escape(text)
 }
 
-func (html Html) ToggleList(open bool) string {
-	if open {
-		return "<ul>\n"
-	} else {
-		return "</ul>"
-	}
+func (html *Html) GetState() State {
+	return html.State
 }
 
-func (html Html) TogglePre(open bool) string {
-	if open {
-		return "<pre>"
-	} else {
-		return "</pre>"
+func (html *Html) SetState(state State) string {
+	if state == html.State {
+		if state == Text || state == Quote {
+			return "<br>"
+		}
+		return ""
 	}
-}
-
-func (html Html) ToggleQuote(open bool) string {
-	if open {
-		return "<blockquote>\n"
-	} else {
-		return "</blockquote>"
+	var closing string
+	var opening string
+	switch html.State {
+	case List:
+		closing = "</ul>\n"
+	case Quote:
+		closing = "</blockquote>\n"
+	case Pre:
+		closing = "</pre>\n"
 	}
+	switch state {
+	case List:
+		opening = "<ul>\n"
+	case Quote:
+		opening = "<blockquote>\n<p>"
+	case Pre:
+		opening = "<pre>\n"
+	case Text:
+		opening = "<p>"
+	}
+	html.State = state
+	return closing + opening
 }
