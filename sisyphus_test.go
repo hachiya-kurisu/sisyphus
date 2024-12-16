@@ -63,3 +63,12 @@ func TestAspeq(t *testing.T) {
 		t.Errorf("%s should be %s", html, expect)
 	}
 }
+
+func TestCurrent(t *testing.T) {
+	gmi := "=> /here a link"
+	html := Convert(gmi, &Html{Current: "/here"})
+	expect := "<p><a class=x href='/here'>a link</a>\n"
+	if html != expect {
+		t.Errorf("%s should be %s", html, expect)
+	}
+}

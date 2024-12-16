@@ -11,8 +11,8 @@ import (
 type MediaHandler func(*Html, string, string, string) string
 
 type MediaRule struct {
-	Suffix     string
-	Ext string
+	Suffix  string
+	Ext     string
 	Handler MediaHandler
 }
 
@@ -84,7 +84,11 @@ func (html *Html) Link(url string, text string) string {
 	if text == "" {
 		text = url
 	}
-	return fmt.Sprintf("<a href='%s'>%s</a>", escape(url), escape(text))
+	if html.Current == url {
+		return fmt.Sprintf("<a class=x href='%s'>%s</a>", escape(url), escape(text))
+	} else {
+		return fmt.Sprintf("<a href='%s'>%s</a>", escape(url), escape(text))
+	}
 }
 
 func (html *Html) ListItem(text string) string {
