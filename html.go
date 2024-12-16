@@ -11,28 +11,26 @@ import (
 type MediaHandler func(*Html, string, string, string) string
 
 type MediaRule struct {
-	Tag     string
+	Suffix     string
+	Ext string
 	Handler MediaHandler
 }
 
 var Keywords = [...]MediaRule{
-	{"(image)", (*Html).image},
-	{"(photo)", (*Html).image},
-	{"(photograph)", (*Html).image},
-	{"(picture)", (*Html).image},
-	{"(video)", (*Html).video},
-	{"(audio)", (*Html).audio},
-	{"(music)", (*Html).audio},
-}
-
-var Extensions = [...]MediaRule{
-	{".jpg", (*Html).image},
-	{".png", (*Html).image},
-	{".gif", (*Html).image},
-	{".mp4", (*Html).video},
-	{".m4a", (*Html).audio},
-	{".mp3", (*Html).audio},
-	{".ogg", (*Html).audio},
+	{"(image)", "", (*Html).image},
+	{"(photo)", "", (*Html).image},
+	{"(photograph)", "", (*Html).image},
+	{"(picture)", "", (*Html).image},
+	{"(video)", "", (*Html).video},
+	{"(audio)", "", (*Html).audio},
+	{"(music)", "", (*Html).audio},
+	{"", ".jpg", (*Html).image},
+	{"", ".png", (*Html).image},
+	{"", ".gif", (*Html).image},
+	{"", ".mp4", (*Html).video},
+	{"", ".m4a", (*Html).audio},
+	{"", ".mp3", (*Html).audio},
+	{"", ".ogg", (*Html).audio},
 }
 
 func escape(raw string) string {
@@ -75,13 +73,11 @@ func (html *Html) image(uri string, text string, suffix string) string {
 func (html *Html) Link(url string, text string) string {
 	if html.Extended {
 		for _, kw := range Keywords {
-			if strings.HasSuffix(text, kw.Tag) {
-				return kw.Handler(html, escape(url), escape(text), kw.Tag)
-			}
-		}
-		for _, ext := range Extensions {
-			if strings.HasSuffix(url, ext.Tag) {
-				return ext.Handler(html, escape(url), escape(text), "")
+			switch {
+			case kw.Suffix != "" && strings.HasSuffix(text, kw.Suffix):
+				return kw.Handler(html, escape(url), escape(text), kw.Suffix)
+			case kw.Ext != "" && strings.HasSuffix(url, kw.Ext):
+				return kw.Handler(html, escape(url), escape(text), "")
 			}
 		}
 	}
