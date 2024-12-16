@@ -32,7 +32,7 @@ var mdcases = [][]string{
 	{"=> src oh hay (image)", "![oh hay](src)\n"},
 	{"> hello\n> hm", "> hello\n> hm\n"},
 	{"> hello\nhm", "> hello\nhm\n"},
-	{"```\npre", "```\npre\n```"},
+	{"```\npre", "```\npre\n```\n"},
 }
 
 func TestHtml(t *testing.T) {
