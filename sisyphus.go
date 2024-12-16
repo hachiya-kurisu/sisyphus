@@ -3,6 +3,7 @@ package sisyphus
 import (
 	"bufio"
 	"fmt"
+	"bytes"
 	"io"
 	"strings"
 )
@@ -30,7 +31,15 @@ const (
 	Quote
 )
 
-func Gem(r io.Reader, w io.Writer, flavor Flavor) {
+
+func Convert(gmi string, flavor Flavor) string {
+	rd := strings.NewReader(gmi)
+	var b bytes.Buffer
+	Cook(rd, &b, flavor)
+	return b.String()
+}
+
+func Cook(r io.Reader, w io.Writer, flavor Flavor) {
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
 		line := scanner.Text()

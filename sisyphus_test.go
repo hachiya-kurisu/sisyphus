@@ -1,9 +1,6 @@
 package sisyphus
 
-import (
-	"strings"
-	"testing"
-)
+import "testing"
 
 var htmlcases = [][]string{
 	{"text\nanother line\n\n", "<p>text\n<br>another line\n\n"},
@@ -14,6 +11,8 @@ var htmlcases = [][]string{
 	{"* 1\n> 2", "<ul>\n<li>1\n</ul>\n<blockquote>\n<p>2\n</blockquote>\n"},
 	{"=> link", "<p><a href='link'>link</a>\n"},
 	{"=> src oh hay (image)", "<p><img src='src' alt='oh hay'>\n"},
+	{"=> picto fff (photograph)", "<p><img src='picto' alt='fff'>\n"},
+	{"=> ume.jpg", "<p><img src='ume.jpg' alt=''>\n"},
 	{"=> vid (video)", "<p><video controls src='vid' title=''></video>\n"},
 	{"> hello\n> hm", "<blockquote>\n<p>hello\n<br>hm\n</blockquote>\n"},
 	{"> hello\nhm", "<blockquote>\n<p>hello\n</blockquote>\n<p>hm\n"},
@@ -37,40 +36,27 @@ var mdcases = [][]string{
 
 func TestHtml(t *testing.T) {
 	for _, c := range htmlcases {
-		var out strings.Builder
-		Gem(
-			strings.NewReader(c[0]),
-			&out,
-			&Html{Extended: true},
-		)
-		if out.String() != c[1] {
-			t.Errorf("[%s] should be [%s]", out.String(), c[1])
+		html := Convert(c[0], &Html{Extended: true})
+		if html != c[1] {
+			t.Errorf("%s should be %s", html, c[1])
 		}
 	}
 }
 
 func TestMarkdown(t *testing.T) {
 	for _, c := range mdcases {
-		var out strings.Builder
-		Gem(
-			strings.NewReader(c[0]),
-			&out,
-			&Markdown{Extended: true},
-		)
-		if out.String() != c[1] {
-			t.Errorf("[%s] should be [%s]", out.String(), c[1])
+		md := Convert(c[0], &Markdown{Extended: true})
+		if md != c[1] {
+			t.Errorf("%s should be %s", md, c[1])
 		}
 	}
 }
 
 func TestAspeq(t *testing.T) {
-	var out strings.Builder
-	Gem(
-		strings.NewReader("=> ume.jpg 梅ちゃん (image)"),
-		&out,
-		&Html{Extended: true, Aspeq: true},
-	)
-	if out.String() != "<p><img src='ume.jpg' class=super16 alt='梅ちゃん'>\n" {
-		t.Errorf("[%s] should be [%s]", out.String(), "lol")
+	gmi := "=> ume.jpg 梅ちゃん (image)"
+	expect := "<p><img src='ume.jpg' class=super16 alt='梅ちゃん'>\n"
+	html := Convert(gmi, &Html{Extended: true, Aspeq: true})
+	if html != expect {
+		t.Errorf("%s should be %s", html, expect)
 	}
 }

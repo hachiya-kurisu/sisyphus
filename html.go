@@ -27,7 +27,8 @@ func (html *Html) video(url string, text string) string {
 	return fmt.Sprintf("<video controls src='%s' title='%s'></video>", url, text)
 }
 
-func (html *Html) image(uri string, text string) string {
+func (html *Html) image(uri string, text string, suffix string) string {
+	text = strings.TrimSpace(strings.TrimSuffix(text, suffix))
 	parsed, err := url.Parse(uri)
 	if err == nil && html.Aspeq && !parsed.IsAbs() {
 		ar, err := aspeq.FromImage(uri)
@@ -39,17 +40,20 @@ func (html *Html) image(uri string, text string) string {
 }
 
 func (html *Html) Link(url string, text string) string {
-	if text == "" {
-		text = url
-	}
 	switch {
 	case html.Extended && strings.HasSuffix(text, "(image)"):
-		text = strings.TrimSpace(strings.TrimSuffix(text, "(image)"))
-		return html.image(escape(url), escape(text))
+		return html.image(escape(url), escape(text), "(image)")
+	case html.Extended && strings.HasSuffix(text, "(photograph)"):
+		return html.image(escape(url), escape(text), "(photograph)")
+	case html.Extended && strings.HasSuffix(url, ".jpg"):
+		return html.image(escape(url), escape(text), "")
 	case html.Extended && strings.HasSuffix(text, "(video)"):
 		text = strings.TrimSpace(strings.TrimSuffix(text, "(video)"))
 		return html.video(escape(url), escape(text))
 	default:
+		if text == "" {
+			text = url
+		}
 		return fmt.Sprintf("<a href='%s'>%s</a>", escape(url), escape(text))
 	}
 }

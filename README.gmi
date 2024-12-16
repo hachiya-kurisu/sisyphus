@@ -20,9 +20,9 @@ $ sisyphus <index.gmi >index.html
 
 ```
 // html
-sisyphus.Gem(os.Stdin, os.Stdout, &sisyphus.Html{})
+sisyphus.Cook(os.Stdin, os.Stdout, &sisyphus.Html{})
 
 // markdown
-sisyphus.Gem(os.Stdin, os.Stdout, &sisyphus.Markdown{})
+sisyphus.Cook(os.Stdin, os.Stdout, &sisyphus.Markdown{})
 ```
 
