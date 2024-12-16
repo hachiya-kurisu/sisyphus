@@ -2,8 +2,8 @@ package sisyphus
 
 import (
 	"bufio"
-	"fmt"
 	"bytes"
+	"fmt"
 	"io"
 	"strings"
 )
@@ -30,7 +30,6 @@ const (
 	Pre
 	Quote
 )
-
 
 func Convert(gmi string, flavor Flavor) string {
 	rd := strings.NewReader(gmi)
