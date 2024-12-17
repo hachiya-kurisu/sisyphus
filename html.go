@@ -21,9 +21,15 @@ var Keywords = [...]MediaRule{
 	{"(photo)", "", (*Html).image},
 	{"(photograph)", "", (*Html).image},
 	{"(picture)", "", (*Html).image},
+	{"(foto)", "", (*Html).image},
+	{"(bilde)", "", (*Html).image},
+	{"(写真)", "", (*Html).image},
+	{"(映像)", "", (*Html).image},
 	{"(video)", "", (*Html).video},
+	{"(動画)", "", (*Html).video},
 	{"(audio)", "", (*Html).audio},
 	{"(music)", "", (*Html).audio},
+	{"(lyd)", "", (*Html).audio},
 	{"", ".jpg", (*Html).image},
 	{"", ".png", (*Html).image},
 	{"", ".gif", (*Html).image},
@@ -33,19 +39,19 @@ var Keywords = [...]MediaRule{
 	{"", ".ogg", (*Html).audio},
 }
 
-func escape(raw string) string {
+func Safe(raw string) string {
 	return html.EscapeString(raw)
 }
 
 type Html struct {
-	Extended bool
-	Aspeq    bool
-	Current  string
-	State    State
+	Inline  bool
+	Aspeq   string
+	Current string
+	State   State
 }
 
 func (html *Html) Header(level int, text string) string {
-	return fmt.Sprintf("<h%d>%s</h%d>\n", level, escape(text), level)
+	return fmt.Sprintf("<h%d>%s</h%d>\n", level, Safe(text), level)
 }
 
 func (html *Html) video(url string, text string, suffix string) string {
@@ -61,8 +67,9 @@ func (html *Html) audio(url string, text string, suffix string) string {
 func (html *Html) image(uri string, text string, suffix string) string {
 	text = strings.TrimSpace(strings.TrimSuffix(text, suffix))
 	parsed, err := url.Parse(uri)
-	if err == nil && html.Aspeq && !parsed.IsAbs() {
-		ar, err := aspeq.FromImage(uri)
+	if err == nil && html.Aspeq != "" && !parsed.IsAbs() {
+		path := fmt.Sprintf("%s/%s", html.Aspeq, uri)
+		ar, err := aspeq.FromImage(path)
 		if err == nil {
 			return fmt.Sprintf("<img src='%s' class=%s alt='%s'>", uri, ar.Name, text)
 		}
@@ -71,13 +78,13 @@ func (html *Html) image(uri string, text string, suffix string) string {
 }
 
 func (html *Html) Link(url string, text string) string {
-	if html.Extended {
+	if html.Inline {
 		for _, kw := range Keywords {
 			switch {
 			case kw.Suffix != "" && strings.HasSuffix(text, kw.Suffix):
-				return kw.Handler(html, escape(url), escape(text), kw.Suffix)
+				return kw.Handler(html, Safe(url), Safe(text), kw.Suffix)
 			case kw.Ext != "" && strings.HasSuffix(url, kw.Ext):
-				return kw.Handler(html, escape(url), escape(text), "")
+				return kw.Handler(html, Safe(url), Safe(text), "")
 			}
 		}
 	}
@@ -85,18 +92,18 @@ func (html *Html) Link(url string, text string) string {
 		text = url
 	}
 	if html.Current == url {
-		return fmt.Sprintf("<a class=x href='%s'>%s</a>", escape(url), escape(text))
+		return fmt.Sprintf("<a class=x href='%s'>%s</a>", Safe(url), Safe(text))
 	} else {
-		return fmt.Sprintf("<a href='%s'>%s</a>", escape(url), escape(text))
+		return fmt.Sprintf("<a href='%s'>%s</a>", Safe(url), Safe(text))
 	}
 }
 
 func (html *Html) ListItem(text string) string {
-	return fmt.Sprintf("<li>%s\n", escape(text))
+	return fmt.Sprintf("<li>%s\n", Safe(text))
 }
 
 func (html *Html) Pre(text string) string {
-	return escape(text)
+	return Safe(text)
 }
 
 func (html *Html) Quote(text string) string {
@@ -104,7 +111,7 @@ func (html *Html) Quote(text string) string {
 }
 
 func (html *Html) Text(text string) string {
-	return escape(text)
+	return Safe(text)
 }
 
 func (html *Html) GetState() State {

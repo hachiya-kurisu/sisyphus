@@ -39,7 +39,7 @@ var mdcases = [][]string{
 
 func TestHtml(t *testing.T) {
 	for _, c := range htmlcases {
-		html := Convert(c[0], &Html{Extended: true})
+		html := Convert(c[0], &Html{Inline: true})
 		if html != c[1] {
 			t.Errorf("%s should be %s", html, c[1])
 		}
@@ -48,7 +48,7 @@ func TestHtml(t *testing.T) {
 
 func TestMarkdown(t *testing.T) {
 	for _, c := range mdcases {
-		md := Convert(c[0], &Markdown{Extended: true})
+		md := Convert(c[0], &Markdown{Inline: true})
 		if md != c[1] {
 			t.Errorf("%s should be %s", md, c[1])
 		}
@@ -58,7 +58,7 @@ func TestMarkdown(t *testing.T) {
 func TestAspeq(t *testing.T) {
 	gmi := "=> ume.jpg 梅ちゃん (image)"
 	expect := "<p><img src='ume.jpg' class=super16 alt='梅ちゃん'>\n"
-	html := Convert(gmi, &Html{Extended: true, Aspeq: true})
+	html := Convert(gmi, &Html{Inline: true, Aspeq: "."})
 	if html != expect {
 		t.Errorf("%s should be %s", html, expect)
 	}
