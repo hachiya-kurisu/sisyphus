@@ -12,8 +12,8 @@ var htmlcases = [][]string{
 	{"=> link", "<p><a href='link'>link</a>\n"},
 	{"> hello\n> hm", "<blockquote>\n<p>hello\n<br>hm\n</blockquote>\n"},
 	{"> hello\nhm", "<blockquote>\n<p>hello\n</blockquote>\n<p>hm\n"},
-	{"```\npre", "<pre>\npre\n</pre>\n"},
-	{"```\npre\n```", "<pre>\npre\n</pre>\n"},
+	{"```\npre", "<pre>pre\n</pre>\n"},
+	{"```\npre\n```", "<pre>pre\n</pre>\n"},
 }
 
 var mdcases = [][]string{

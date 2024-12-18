@@ -17,6 +17,15 @@ type Html struct {
 	Hooks   []*Hook
 }
 
+var Tags = map[State][2]string{
+	None:  {"", ""},
+	Text:  {"<p>", ""},
+	List:  {"<ul>\n", "</ul>\n"},
+	Pre:   {"<pre>", "</pre>\n"},
+	Quote: {"<blockquote>\n<p>", "</blockquote>\n"},
+	Link:  {"", ""},
+}
+
 func (html *Html) On(state State, suffix, ext string, cb Callback) {
 	html.Hooks = append(html.Hooks, &Hook{suffix, ext, cb})
 }
@@ -82,26 +91,8 @@ func (html *Html) SetState(state State) string {
 		}
 		return ""
 	}
-	var closing string
-	var opening string
-	switch html.State {
-	case List:
-		closing = "</ul>\n"
-	case Quote:
-		closing = "</blockquote>\n"
-	case Pre:
-		closing = "</pre>\n"
-	}
-	switch state {
-	case List:
-		opening = "<ul>\n"
-	case Quote:
-		opening = "<blockquote>\n<p>"
-	case Pre:
-		opening = "<pre>\n"
-	case Text:
-		opening = "<p>"
-	}
+	closing := Tags[html.State][1]
+	opening := Tags[state][0]
 	html.State = state
 	return closing + opening
 }
