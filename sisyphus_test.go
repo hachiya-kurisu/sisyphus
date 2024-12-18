@@ -49,7 +49,7 @@ func TestMarkdown(t *testing.T) {
 
 func TestCallback(t *testing.T) {
 	flavor := &Markdown{}
-	flavor.On(Link, ".jpg", func(url, what, lol string) string {
+	flavor.OnLink(".jpg", func(_, _, _ string) string {
 		return "hijacked!"
 	})
 	gmi := "=> test.jpg"
@@ -62,7 +62,7 @@ func TestCallback(t *testing.T) {
 
 func TestAspeq(t *testing.T) {
 	flavor := &Html{}
-	flavor.On(Link, ".jpg", Aspeq("."))
+	flavor.OnLink(".jpg", Aspeq("."))
 	gmi := "=> ume.jpg 梅ちゃん"
 	expect := "<p><img src='ume.jpg' class=super16 alt='梅ちゃん'>\n"
 	html := Convert(gmi, flavor)
@@ -73,7 +73,7 @@ func TestAspeq(t *testing.T) {
 
 func TestAspeqMissing(t *testing.T) {
 	flavor := &Html{}
-	flavor.On(Link, ".jpg", Aspeq("."))
+	flavor.OnLink(".jpg", Aspeq("."))
 	gmi := "=> notfound.jpg"
 	expect := "<p><img src='notfound.jpg' class=unknown alt=''>\n"
 	html := Convert(gmi, flavor)
@@ -91,15 +91,50 @@ func TestCurrent(t *testing.T) {
 	}
 }
 
-// func TestWrap(t *testing.T) {
-// 	gmi := "wrap me up"
-// 	html := Convert(gmi, &Html{Wrap: "article"})
-// 	expect := "<article>\n<p>wrap me up\n</article>"
-// 	if html != expect {
-// 		t.Errorf("%s should be %s", html, expect)
-// 	}
-// }
+func TestHtmlWrap(t *testing.T) {
+	gmi := "wrap me up"
+	flavor := Html{}
+	flavor.Wrap("article")
+	html := Convert(gmi, &flavor)
+	expect := "<article><p>wrap me up\n</article>"
+	if html != expect {
+		t.Errorf("%s should be %s", html, expect)
+	}
+}
 
-func callback(uri, text, suffix string) string {
-	return "-.-"
+func TestHtmlQuote(t *testing.T) {
+	flavor := &Html{}
+	flavor.OnQuote(func(_ string) string {
+		return "!"
+	})
+	gmi := ">>12435"
+	expect := "<blockquote>\n<p>!\n</blockquote>\n"
+	html := Convert(gmi, flavor)
+	if html != expect {
+		t.Errorf("%s should be %s", html, expect)
+	}
+}
+
+func TestMdWrap(t *testing.T) {
+	gmi := "wrap me up"
+	flavor := Markdown{}
+	flavor.Wrap("*")
+	md := Convert(gmi, &flavor)
+	expect := "*wrap me up\n*"
+	if md != expect {
+		t.Errorf("%s should be %s", md, expect)
+	}
+}
+
+func TestMdQuote(t *testing.T) {
+	flavor := &Markdown{}
+	flavor.OnQuote(func(_ string) string {
+		return "!"
+	})
+	gmi := ">>12435"
+	expect := "!\n"
+	md := Convert(gmi, flavor)
+	if md != expect {
+		t.Errorf("%s should be %s", md, expect)
+	}
 }

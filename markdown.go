@@ -2,24 +2,59 @@ package sisyphus
 
 import (
 	"fmt"
+	"path/filepath"
 	"strings"
 )
 
 type Markdown struct {
-	Current string
 	State   State
-	Hooks   []*Hook
+	Current string
+
+	LinkHooks map[string]LinkHook
+	QuoteHook QuoteHook
+	OpenHook  Hook
+	CloseHook Hook
 }
 
-func (md *Markdown) On(state State, rule string, cb Callback) {
-	md.Hooks = append(md.Hooks, &Hook{rule, cb})
+func (md *Markdown) OnLink(rule string, hook LinkHook) {
+	if md.LinkHooks == nil {
+		md.LinkHooks = make(map[string]LinkHook)
+	}
+	md.LinkHooks[rule] = hook
+}
+
+func (md *Markdown) OnQuote(hook QuoteHook) {
+	md.QuoteHook = hook
+}
+
+func (md *Markdown) OnOpen(hook Hook) {
+	md.OpenHook = hook
+}
+
+func (md *Markdown) OnClose(hook Hook) {
+	md.CloseHook = hook
+}
+
+func (md *Markdown) Wrap(s string) {
+	md.OnOpen(func() string {
+		return s
+	})
+	md.OnClose(func() string {
+		return s
+	})
 }
 
 func (md *Markdown) Open() string {
+	if md.OpenHook != nil {
+		return md.OpenHook()
+	}
 	return ""
 }
 
 func (md *Markdown) Close() string {
+	if md.CloseHook != nil {
+		return md.CloseHook()
+	}
 	return ""
 }
 
@@ -28,10 +63,10 @@ func (md *Markdown) Header(level int, text string) string {
 }
 
 func (md *Markdown) Link(url string, text string) string {
-	for _, h := range md.Hooks {
-		if strings.HasSuffix(text, h.Rule) || strings.HasSuffix(url, h.Rule) {
-			return h.Callback(Safe(url), Safe(text), h.Rule)
-		}
+	ext := filepath.Ext(url)
+	hook, ok := md.LinkHooks[ext]
+	if ok {
+		return hook(Safe(url), Safe(text), ext)
 	}
 	if text == "" {
 		text = url
@@ -52,6 +87,9 @@ func (md *Markdown) Text(text string) string {
 }
 
 func (md *Markdown) Quote(text string) string {
+	if md.QuoteHook != nil {
+		return md.QuoteHook(text)
+	}
 	return "> " + text
 }
 

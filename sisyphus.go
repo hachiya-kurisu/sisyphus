@@ -12,25 +12,27 @@ import (
 
 const Version = "0.3.0"
 
-type Callback func(string, string, string) string
-
-type Hook struct {
-	Rule     string
-	Callback Callback
-}
+type LinkHook func(uri string, text string, match string) string
+type QuoteHook func(text string) string
+type Hook func() string
 
 type Flavor interface {
 	Open() string
 	Close() string
-	Header(level int, text string) string
-	Link(url string, text string) string
-	ListItem(text string) string
-	Pre(text string) string
-	Quote(text string) string
-	Text(text string) string
-	SetState(state State) string
+	Header(int, string) string
+	Link(string, string) string
+	ListItem(string) string
+	Pre(string) string
+	Quote(string) string
+	Text(string) string
+
+	SetState(State) string
 	GetState() State
-	On(State, string, Callback)
+
+	OnLink(string, LinkHook)
+	OnQuote(QuoteHook)
+	OnOpen(Hook)
+	OnClose(Hook)
 }
 
 type State int
@@ -41,12 +43,9 @@ const (
 	List
 	Pre
 	Quote
-	Link
-	Open
-	Close
 )
 
-func Aspeq(prefix string) Callback {
+func Aspeq(prefix string) LinkHook {
 	return func(uri, text, suffix string) string {
 		parsed, err := url.Parse(uri)
 		format := "<img src='%s' class=%s alt='%s'>"

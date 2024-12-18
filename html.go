@@ -3,7 +3,7 @@ package sisyphus
 import (
 	"fmt"
 	"html"
-	"strings"
+	"path/filepath"
 )
 
 func Safe(raw string) string {
@@ -11,9 +11,12 @@ func Safe(raw string) string {
 }
 
 type Html struct {
-	Current string
-	State   State
-	Hooks   []*Hook
+	Current   string
+	State     State
+	LinkHooks map[string]LinkHook
+	QuoteHook QuoteHook
+	OpenHook  Hook
+	CloseHook Hook
 }
 
 var tags = map[State][2]string{
@@ -24,15 +27,45 @@ var tags = map[State][2]string{
 	Quote: {"<blockquote>\n<p>", "</blockquote>\n"},
 }
 
-func (html *Html) On(state State, rule string, cb Callback) {
-	html.Hooks = append(html.Hooks, &Hook{rule, cb})
+func (html *Html) OnLink(rule string, hook LinkHook) {
+	if html.LinkHooks == nil {
+		html.LinkHooks = make(map[string]LinkHook)
+	}
+	html.LinkHooks[rule] = hook
+}
+
+func (html *Html) OnQuote(hook QuoteHook) {
+	html.QuoteHook = hook
+}
+
+func (html *Html) OnOpen(hook Hook) {
+	html.OpenHook = hook
+}
+
+func (html *Html) OnClose(hook Hook) {
+	html.CloseHook = hook
+}
+
+func (html *Html) Wrap(tag string) {
+	html.OnOpen(func() string {
+		return fmt.Sprintf("<%s>", tag)
+	})
+	html.OnClose(func() string {
+		return fmt.Sprintf("</%s>", tag)
+	})
 }
 
 func (html *Html) Open() string {
+	if html.OpenHook != nil {
+		return html.OpenHook()
+	}
 	return ""
 }
 
 func (html *Html) Close() string {
+	if html.CloseHook != nil {
+		return html.CloseHook()
+	}
 	return ""
 }
 
@@ -41,10 +74,11 @@ func (html *Html) Header(level int, text string) string {
 }
 
 func (html *Html) Link(url string, text string) string {
-	for _, h := range html.Hooks {
-		if strings.HasSuffix(text, h.Rule) || strings.HasSuffix(url, h.Rule) {
-			return h.Callback(Safe(url), Safe(text), h.Rule)
-		}
+	// todo - sjekk suffix for (image)
+	ext := filepath.Ext(url)
+	hook, ok := html.LinkHooks[ext]
+	if ok {
+		return hook(Safe(url), Safe(text), ext)
 	}
 	if text == "" {
 		text = url
@@ -65,6 +99,9 @@ func (html *Html) Pre(text string) string {
 }
 
 func (html *Html) Quote(text string) string {
+	if html.QuoteHook != nil {
+		return html.QuoteHook(Safe(text))
+	}
 	return html.Text(text)
 }
 
