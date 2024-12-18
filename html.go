@@ -23,7 +23,6 @@ var Tags = map[State][2]string{
 	List:  {"<ul>\n", "</ul>\n"},
 	Pre:   {"<pre>", "</pre>\n"},
 	Quote: {"<blockquote>\n<p>", "</blockquote>\n"},
-	Link:  {"", ""},
 }
 
 func (html *Html) On(state State, suffix, ext string, cb Callback) {
