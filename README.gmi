@@ -28,8 +28,8 @@ sisyphus.Cook(os.Stdin, os.Stdout, &sisyphus.Markdown{})
 // convert from a string
 sisyphus.Convert("=> somewhere a link", &sisyphus.Html{})
 
-// callbacks
+// hooks
 flavor := &sisyphus.Html{}
-flavor.On(Link, ".jpg", "", cb)
+flavor.OnLink(".jpg", hook)
 ```
 
