@@ -4,9 +4,9 @@ import (
 	"blekksprut.net/aspeq"
 	"bufio"
 	"bytes"
-	"net/url"
 	"fmt"
 	"io"
+	"net/url"
 	"strings"
 )
 
@@ -16,7 +16,7 @@ type Callback func(string, string, string) string
 
 type Hook struct {
 	Suffix, Ext string
-	Callback Callback
+	Callback    Callback
 }
 
 type Flavor interface {

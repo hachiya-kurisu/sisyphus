@@ -103,4 +103,3 @@ func TestWrap(t *testing.T) {
 func callback(uri, text, suffix string) string {
 	return "-.-"
 }
-
