@@ -11,6 +11,8 @@ import (
 const Version = "0.1.1"
 
 type Flavor interface {
+	Open() string
+	Close() string
 	Header(level int, text string) string
 	Link(url string, text string) string
 	ListItem(text string) string
@@ -39,6 +41,7 @@ func Convert(gmi string, flavor Flavor) string {
 }
 
 func Cook(r io.Reader, w io.Writer, flavor Flavor) {
+	fmt.Fprintf(w, flavor.Open())
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -82,4 +85,5 @@ func Cook(r io.Reader, w io.Writer, flavor Flavor) {
 		}
 	}
 	fmt.Fprintf(w, flavor.SetState(None))
+	fmt.Fprintf(w, flavor.Close())
 }

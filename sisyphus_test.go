@@ -72,3 +72,12 @@ func TestCurrent(t *testing.T) {
 		t.Errorf("%s should be %s", html, expect)
 	}
 }
+
+func TestWrap(t *testing.T) {
+	gmi := "wrap me up"
+	html := Convert(gmi, &Html{Wrap: "article"})
+	expect := "<article>\n<p>wrap me up\n</article>"
+	if html != expect {
+		t.Errorf("%s should be %s", html, expect)
+	}
+}

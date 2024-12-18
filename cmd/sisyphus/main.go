@@ -12,6 +12,7 @@ func main() {
 	x := flag.Bool("x", false, "allow inline media")
 	a := flag.String("a", "", "aspeq prefix")
 	f := flag.String("f", "html", "flavor (html/markdown)")
+	w := flag.String("w", "", "wrap output in tag")
 	flag.Parse()
 
 	if *v {
@@ -22,7 +23,7 @@ func main() {
 	var flavor sisyphus.Flavor
 	switch *f {
 	case "html":
-		flavor = &sisyphus.Html{Inline: *x, Aspeq: *a}
+		flavor = &sisyphus.Html{Inline: *x, Aspeq: *a, Wrap: *w}
 	case "markdown":
 		flavor = &sisyphus.Markdown{Inline: *x}
 	}

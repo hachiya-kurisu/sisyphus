@@ -20,6 +20,7 @@ var Keywords = [...]MediaRule{
 	{"(image)", "", (*Html).image},
 	{"(photo)", "", (*Html).image},
 	{"(photograph)", "", (*Html).image},
+	{"(illustration)", "", (*Html).image},
 	{"(picture)", "", (*Html).image},
 	{"(foto)", "", (*Html).image},
 	{"(bilde)", "", (*Html).image},
@@ -30,6 +31,9 @@ var Keywords = [...]MediaRule{
 	{"(audio)", "", (*Html).audio},
 	{"(music)", "", (*Html).audio},
 	{"(lyd)", "", (*Html).audio},
+	{"(音)", "", (*Html).audio},
+	{"(音声)", "", (*Html).audio},
+	{"(音楽)", "", (*Html).audio},
 	{"", ".jpg", (*Html).image},
 	{"", ".png", (*Html).image},
 	{"", ".gif", (*Html).image},
@@ -47,7 +51,22 @@ type Html struct {
 	Inline  bool
 	Aspeq   string
 	Current string
+	Wrap    string
 	State   State
+}
+
+func (html *Html) Open() string {
+	if html.Wrap != "" {
+		return fmt.Sprintf("<%s>\n", html.Wrap)
+	}
+	return ""
+}
+
+func (html *Html) Close() string {
+	if html.Wrap != "" {
+		return fmt.Sprintf("</%s>", html.Wrap)
+	}
+	return ""
 }
 
 func (html *Html) Header(level int, text string) string {

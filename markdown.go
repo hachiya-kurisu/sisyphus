@@ -11,6 +11,14 @@ type Markdown struct {
 	State   State
 }
 
+func (md *Markdown) Open() string {
+	return ""
+}
+
+func (md *Markdown) Close() string {
+	return ""
+}
+
 func (md *Markdown) Header(level int, text string) string {
 	return fmt.Sprintf("%s %s\n", strings.Repeat("#", level), text)
 }
