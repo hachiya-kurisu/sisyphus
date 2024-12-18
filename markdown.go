@@ -11,8 +11,8 @@ type Markdown struct {
 	Hooks   []*Hook
 }
 
-func (md *Markdown) On(state State, suffix, ext string, cb Callback) {
-	md.Hooks = append(md.Hooks, &Hook{suffix, ext, cb})
+func (md *Markdown) On(state State, rule string, cb Callback) {
+	md.Hooks = append(md.Hooks, &Hook{rule, cb})
 }
 
 func (md *Markdown) Open() string {
@@ -29,8 +29,8 @@ func (md *Markdown) Header(level int, text string) string {
 
 func (md *Markdown) Link(url string, text string) string {
 	for _, h := range md.Hooks {
-		if strings.HasSuffix(text, h.Suffix) && strings.HasSuffix(url, h.Ext) {
-			return h.Callback(Safe(url), Safe(text), h.Suffix)
+		if strings.HasSuffix(text, h.Rule) || strings.HasSuffix(url, h.Rule) {
+			return h.Callback(Safe(url), Safe(text), h.Rule)
 		}
 	}
 	if text == "" {

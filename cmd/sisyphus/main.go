@@ -11,7 +11,7 @@ func main() {
 	v := flag.Bool("v", false, "version")
 	a := flag.String("a", "", "aspeq prefix")
 	f := flag.String("f", "html", "flavor (html/markdown)")
-	w := flag.String("w", "", "wrap output in tag")
+	_ = flag.String("w", "", "wrap output in tag")
 	flag.Parse()
 
 	if *v {
@@ -22,9 +22,9 @@ func main() {
 	var flavor sisyphus.Flavor
 	switch *f {
 	case "html":
-		flavor = &sisyphus.Html{Wrap: *w}
+		flavor = &sisyphus.Html{} // Wrap: *w}
 		if *a != "" {
-			flavor.On(sisyphus.Link, "", ".jpg", sisyphus.Aspeq(*a))
+			flavor.On(sisyphus.Link, ".jpg", sisyphus.Aspeq(*a))
 		}
 	case "markdown":
 		flavor = &sisyphus.Markdown{}

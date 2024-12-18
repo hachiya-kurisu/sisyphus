@@ -15,8 +15,8 @@ const Version = "0.3.0"
 type Callback func(string, string, string) string
 
 type Hook struct {
-	Suffix, Ext string
-	Callback    Callback
+	Rule     string
+	Callback Callback
 }
 
 type Flavor interface {
@@ -30,7 +30,7 @@ type Flavor interface {
 	Text(text string) string
 	SetState(state State) string
 	GetState() State
-	On(State, string, string, Callback)
+	On(State, string, Callback)
 }
 
 type State int
@@ -42,6 +42,8 @@ const (
 	Pre
 	Quote
 	Link
+	Open
+	Close
 )
 
 func Aspeq(prefix string) Callback {

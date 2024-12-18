@@ -12,12 +12,11 @@ func Safe(raw string) string {
 
 type Html struct {
 	Current string
-	Wrap    string
 	State   State
 	Hooks   []*Hook
 }
 
-var Tags = map[State][2]string{
+var tags = map[State][2]string{
 	None:  {"", ""},
 	Text:  {"<p>", ""},
 	List:  {"<ul>\n", "</ul>\n"},
@@ -25,21 +24,15 @@ var Tags = map[State][2]string{
 	Quote: {"<blockquote>\n<p>", "</blockquote>\n"},
 }
 
-func (html *Html) On(state State, suffix, ext string, cb Callback) {
-	html.Hooks = append(html.Hooks, &Hook{suffix, ext, cb})
+func (html *Html) On(state State, rule string, cb Callback) {
+	html.Hooks = append(html.Hooks, &Hook{rule, cb})
 }
 
 func (html *Html) Open() string {
-	if html.Wrap != "" {
-		return fmt.Sprintf("<%s>\n", html.Wrap)
-	}
 	return ""
 }
 
 func (html *Html) Close() string {
-	if html.Wrap != "" {
-		return fmt.Sprintf("</%s>", html.Wrap)
-	}
 	return ""
 }
 
@@ -49,8 +42,8 @@ func (html *Html) Header(level int, text string) string {
 
 func (html *Html) Link(url string, text string) string {
 	for _, h := range html.Hooks {
-		if strings.HasSuffix(text, h.Suffix) && strings.HasSuffix(url, h.Ext) {
-			return h.Callback(Safe(url), Safe(text), h.Suffix)
+		if strings.HasSuffix(text, h.Rule) || strings.HasSuffix(url, h.Rule) {
+			return h.Callback(Safe(url), Safe(text), h.Rule)
 		}
 	}
 	if text == "" {
@@ -90,8 +83,8 @@ func (html *Html) SetState(state State) string {
 		}
 		return ""
 	}
-	closing := Tags[html.State][1]
-	opening := Tags[state][0]
+	closing := tags[html.State][1]
+	opening := tags[state][0]
 	html.State = state
 	return closing + opening
 }
