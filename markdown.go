@@ -6,9 +6,13 @@ import (
 )
 
 type Markdown struct {
-	Inline  bool
 	Current string
 	State   State
+	Hooks   []*Hook
+}
+
+func (md *Markdown) On(state State, suffix, ext string, cb Callback) {
+	md.Hooks = append(md.Hooks, &Hook{suffix, ext, cb})
 }
 
 func (md *Markdown) Open() string {
@@ -24,16 +28,15 @@ func (md *Markdown) Header(level int, text string) string {
 }
 
 func (md *Markdown) Link(url string, text string) string {
+	for _, h := range md.Hooks {
+		if strings.HasSuffix(text, h.Suffix) && strings.HasSuffix(url, h.Ext) {
+			return h.Callback(Safe(url), Safe(text), h.Suffix)
+		}
+	}
 	if text == "" {
 		text = url
 	}
-	switch {
-	case md.Inline && strings.HasSuffix(text, "(image)"):
-		text = strings.TrimSpace(strings.TrimSuffix(text, "(image)"))
-		return fmt.Sprintf("![%s](%s)", text, url)
-	default:
-		return fmt.Sprintf("[%s](%s)", text, url)
-	}
+	return fmt.Sprintf("[%s](%s)", text, url)
 }
 
 func (md *Markdown) ListItem(text string) string {

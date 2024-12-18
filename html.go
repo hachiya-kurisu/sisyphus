@@ -1,61 +1,24 @@
 package sisyphus
 
 import (
-	"blekksprut.net/aspeq"
 	"fmt"
 	"html"
-	"net/url"
 	"strings"
 )
-
-type MediaHandler func(*Html, string, string, string) string
-
-type MediaRule struct {
-	Suffix  string
-	Ext     string
-	Handler MediaHandler
-}
-
-var Keywords = []MediaRule{
-	{"(image)", "", (*Html).image},
-	{"(photo)", "", (*Html).image},
-	{"(photograph)", "", (*Html).image},
-	{"(illustration)", "", (*Html).image},
-	{"(picture)", "", (*Html).image},
-	{"(foto)", "", (*Html).image},
-	{"(bilde)", "", (*Html).image},
-	{"(写真)", "", (*Html).image},
-	{"(映像)", "", (*Html).image},
-	{"(video)", "", (*Html).video},
-	{"(動画)", "", (*Html).video},
-	{"(audio)", "", (*Html).audio},
-	{"(music)", "", (*Html).audio},
-	{"(lyd)", "", (*Html).audio},
-	{"(音)", "", (*Html).audio},
-	{"(音声)", "", (*Html).audio},
-	{"(音楽)", "", (*Html).audio},
-	{"", ".jpg", (*Html).image},
-	{"", ".png", (*Html).image},
-	{"", ".gif", (*Html).image},
-	{"", ".mp4", (*Html).video},
-	{"", ".m4a", (*Html).audio},
-	{"", ".mp3", (*Html).audio},
-	{"", ".ogg", (*Html).audio},
-}
 
 func Safe(raw string) string {
 	return html.EscapeString(raw)
 }
 
-type OnImage func(string, string, string) string
-
 type Html struct {
-	Inline  bool
-	Aspeq   string
 	Current string
 	Wrap    string
-	OnImage OnImage
 	State   State
+	Hooks   []*Hook
+}
+
+func (html *Html) On(state State, suffix, ext string, cb Callback) {
+	html.Hooks = append(html.Hooks, &Hook{suffix, ext, cb})
 }
 
 func (html *Html) Open() string {
@@ -76,41 +39,10 @@ func (html *Html) Header(level int, text string) string {
 	return fmt.Sprintf("<h%d>%s</h%d>\n", level, Safe(text), level)
 }
 
-func (html *Html) video(url string, text string, suffix string) string {
-	text = strings.TrimSpace(strings.TrimSuffix(text, suffix))
-	return fmt.Sprintf("<video controls src='%s' title='%s'></video>", url, text)
-}
-
-func (html *Html) audio(url string, text string, suffix string) string {
-	text = strings.TrimSpace(strings.TrimSuffix(text, suffix))
-	return fmt.Sprintf("<audio controls src='%s' title='%s'></audio>", url, text)
-}
-
-func (html *Html) image(uri string, text string, suffix string) string {
-	if html.OnImage != nil {
-		return html.OnImage(uri, text, suffix)
-	}
-	text = strings.TrimSpace(strings.TrimSuffix(text, suffix))
-	parsed, err := url.Parse(uri)
-	if err == nil && html.Aspeq != "" && !parsed.IsAbs() {
-		path := fmt.Sprintf("%s/%s", html.Aspeq, uri)
-		ar, err := aspeq.FromImage(path)
-		if err == nil {
-			return fmt.Sprintf("<img src='%s' class=%s alt='%s'>", uri, ar.Name, text)
-		}
-	}
-	return fmt.Sprintf("<img src='%s' alt='%s'>", uri, text)
-}
-
 func (html *Html) Link(url string, text string) string {
-	if html.Inline {
-		for _, kw := range Keywords {
-			switch {
-			case kw.Suffix != "" && strings.HasSuffix(text, kw.Suffix):
-				return kw.Handler(html, Safe(url), Safe(text), kw.Suffix)
-			case kw.Ext != "" && strings.HasSuffix(url, kw.Ext):
-				return kw.Handler(html, Safe(url), Safe(text), "")
-			}
+	for _, h := range html.Hooks {
+		if strings.HasSuffix(text, h.Suffix) && strings.HasSuffix(url, h.Ext) {
+			return h.Callback(Safe(url), Safe(text), h.Suffix)
 		}
 	}
 	if text == "" {

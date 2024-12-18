@@ -1,14 +1,23 @@
 package sisyphus
 
 import (
+	"blekksprut.net/aspeq"
 	"bufio"
 	"bytes"
+	"net/url"
 	"fmt"
 	"io"
 	"strings"
 )
 
 const Version = "0.2.0"
+
+type Callback func(string, string, string) string
+
+type Hook struct {
+	Suffix, Ext string
+	Callback Callback
+}
 
 type Flavor interface {
 	Open() string
@@ -21,6 +30,7 @@ type Flavor interface {
 	Text(text string) string
 	SetState(state State) string
 	GetState() State
+	On(State, string, string, Callback)
 }
 
 type State int
@@ -31,7 +41,23 @@ const (
 	List
 	Pre
 	Quote
+	Link
 )
+
+func Aspeq(prefix string) Callback {
+	return func(uri, text, suffix string) string {
+		parsed, err := url.Parse(uri)
+		format := "<img src='%s' class=%s alt='%s'>"
+		if err == nil && !parsed.IsAbs() {
+			path := fmt.Sprintf("%s/%s", prefix, uri)
+			ar, err := aspeq.FromImage(path)
+			if err == nil {
+				return fmt.Sprintf(format, uri, ar.Name, text)
+			}
+		}
+		return fmt.Sprintf(format, uri, "unknown", text)
+	}
+}
 
 func Convert(gmi string, flavor Flavor) string {
 	rd := strings.NewReader(gmi)

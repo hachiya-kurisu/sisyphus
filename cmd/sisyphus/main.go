@@ -9,7 +9,6 @@ import (
 
 func main() {
 	v := flag.Bool("v", false, "version")
-	x := flag.Bool("x", false, "allow inline media")
 	a := flag.String("a", "", "aspeq prefix")
 	f := flag.String("f", "html", "flavor (html/markdown)")
 	w := flag.String("w", "", "wrap output in tag")
@@ -23,9 +22,13 @@ func main() {
 	var flavor sisyphus.Flavor
 	switch *f {
 	case "html":
-		flavor = &sisyphus.Html{Inline: *x, Aspeq: *a, Wrap: *w}
+		flavor = &sisyphus.Html{Wrap: *w}
+		if *a != "" {
+			flavor.On(sisyphus.Link, "", ".jpg", sisyphus.Aspeq(*a))
+		}
 	case "markdown":
-		flavor = &sisyphus.Markdown{Inline: *x}
+		flavor = &sisyphus.Markdown{}
 	}
+
 	sisyphus.Cook(os.Stdin, os.Stdout, flavor)
 }
