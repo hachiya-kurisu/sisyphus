@@ -16,7 +16,7 @@ type MediaRule struct {
 	Handler MediaHandler
 }
 
-var Keywords = [...]MediaRule{
+var Keywords = []MediaRule{
 	{"(image)", "", (*Html).image},
 	{"(photo)", "", (*Html).image},
 	{"(photograph)", "", (*Html).image},
@@ -47,11 +47,14 @@ func Safe(raw string) string {
 	return html.EscapeString(raw)
 }
 
+type OnImage func(string, string, string) string
+
 type Html struct {
 	Inline  bool
 	Aspeq   string
 	Current string
 	Wrap    string
+	OnImage OnImage
 	State   State
 }
 
@@ -84,6 +87,9 @@ func (html *Html) audio(url string, text string, suffix string) string {
 }
 
 func (html *Html) image(uri string, text string, suffix string) string {
+	if html.OnImage != nil {
+		return html.OnImage(uri, text, suffix)
+	}
 	text = strings.TrimSpace(strings.TrimSuffix(text, suffix))
 	parsed, err := url.Parse(uri)
 	if err == nil && html.Aspeq != "" && !parsed.IsAbs() {

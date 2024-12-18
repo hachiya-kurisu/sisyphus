@@ -81,3 +81,16 @@ func TestWrap(t *testing.T) {
 		t.Errorf("%s should be %s", html, expect)
 	}
 }
+
+func callback(uri, text, suffix string) string {
+	return "-.-"
+}
+
+func TestCallback(t *testing.T) {
+	gmi := "=> image (photo)"
+	html := Convert(gmi, &Html{Inline: true, OnImage: callback})
+	expect := "<p>-.-\n"
+	if html != expect {
+		t.Errorf("line wasn't replaced by callback: %s", html)
+	}
+}
