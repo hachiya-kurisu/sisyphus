@@ -3,8 +3,8 @@ package sisyphus
 import (
 	"fmt"
 	"html"
-	"regexp"
 	"path/filepath"
+	"regexp"
 )
 
 func Safe(raw string) string {
