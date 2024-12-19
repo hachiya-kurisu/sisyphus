@@ -102,6 +102,19 @@ func TestHtmlWrap(t *testing.T) {
 	}
 }
 
+func TestHtmlLinkTag(t *testing.T) {
+	flavor := &Html{}
+	flavor.OnLink("photo", func(_, _, _ string) string {
+		return "!"
+	})
+	gmi := "=> test.jpg (photo)"
+	expect := "<p>!\n"
+	html := Convert(gmi, flavor)
+	if html != expect {
+		t.Errorf("%s should be %s", html, expect)
+	}
+}
+
 func TestHtmlQuote(t *testing.T) {
 	flavor := &Html{}
 	flavor.OnQuote(func(_ string) string {

@@ -3,6 +3,7 @@ package sisyphus
 import (
 	"fmt"
 	"html"
+	"regexp"
 	"path/filepath"
 )
 
@@ -80,6 +81,16 @@ func (html *Html) Link(url string, text string) string {
 	if ok {
 		return hook(Safe(url), Safe(text), ext)
 	}
+
+	re := regexp.MustCompile(`\((.+)\)$`)
+	tag := re.FindStringSubmatch(text)
+	if len(tag) > 1 {
+		hook, ok := html.LinkHooks[tag[1]]
+		if ok {
+			return hook(Safe(url), Safe(text), ext)
+		}
+	}
+
 	if text == "" {
 		text = url
 	}
