@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/url"
+	"path/filepath"
 	"strings"
 )
 
@@ -45,11 +46,14 @@ const (
 	Quote
 )
 
-func Aspeq(prefix string) LinkHook {
+func Aspeq(prefix string, useBase bool) LinkHook {
 	return func(uri, text, suffix string) string {
 		parsed, err := url.Parse(uri)
 		format := "<img src='%s' class=%s alt='%s'>"
 		if err == nil && !parsed.IsAbs() {
+			if useBase {
+				uri = filepath.Base(uri)
+			}
 			path := fmt.Sprintf("%s/%s", prefix, uri)
 			ar, err := aspeq.FromImage(path)
 			if err == nil {

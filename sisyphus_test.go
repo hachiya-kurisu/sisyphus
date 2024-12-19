@@ -62,7 +62,7 @@ func TestCallback(t *testing.T) {
 
 func TestAspeq(t *testing.T) {
 	flavor := &Html{}
-	flavor.OnLink(".jpg", Aspeq("."))
+	flavor.OnLink(".jpg", Aspeq(".", false))
 	gmi := "=> ume.jpg 梅ちゃん"
 	expect := "<p><img src='ume.jpg' class=super16 alt='梅ちゃん'>\n"
 	html := Convert(gmi, flavor)
@@ -73,7 +73,7 @@ func TestAspeq(t *testing.T) {
 
 func TestAspeqMissing(t *testing.T) {
 	flavor := &Html{}
-	flavor.OnLink(".jpg", Aspeq("."))
+	flavor.OnLink(".jpg", Aspeq(".", true))
 	gmi := "=> notfound.jpg"
 	expect := "<p><img src='notfound.jpg' class=unknown alt=''>\n"
 	html := Convert(gmi, flavor)

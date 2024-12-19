@@ -24,7 +24,7 @@ func main() {
 	case "html":
 		flavor = &sisyphus.Html{} // Wrap: *w}
 		if *a != "" {
-			flavor.OnLink(".jpg", sisyphus.Aspeq(*a))
+			flavor.OnLink(".jpg", sisyphus.Aspeq(*a, false))
 		}
 	case "markdown":
 		flavor = &sisyphus.Markdown{}
