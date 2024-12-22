@@ -96,7 +96,7 @@ func TestHtmlWrap(t *testing.T) {
 	flavor := Html{}
 	flavor.Wrap("article")
 	html := Convert(gmi, &flavor)
-	expect := "<article><p>wrap me up\n</article>"
+	expect := "<article>\n<p>wrap me up\n</article>\n"
 	if html != expect {
 		t.Errorf("%s should be %s", html, expect)
 	}

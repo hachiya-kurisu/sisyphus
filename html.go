@@ -49,10 +49,10 @@ func (html *Html) OnClose(hook Hook) {
 
 func (html *Html) Wrap(tag string) {
 	html.OnOpen(func() string {
-		return fmt.Sprintf("<%s>", tag)
+		return fmt.Sprintf("<%s>\n", tag)
 	})
 	html.OnClose(func() string {
-		return fmt.Sprintf("</%s>", tag)
+		return fmt.Sprintf("</%s>\n", tag)
 	})
 }
 

@@ -34,6 +34,8 @@ type Flavor interface {
 	OnQuote(QuoteHook)
 	OnOpen(Hook)
 	OnClose(Hook)
+
+	Wrap(string)
 }
 
 type State int
