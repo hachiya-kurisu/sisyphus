@@ -48,6 +48,9 @@ func (html *Html) OnClose(hook Hook) {
 }
 
 func (html *Html) Wrap(tag string) {
+	if tag == "" {
+		return
+	}
 	html.OnOpen(func() string {
 		return fmt.Sprintf("<%s>\n", tag)
 	})

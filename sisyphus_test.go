@@ -102,6 +102,39 @@ func TestHtmlWrap(t *testing.T) {
 	}
 }
 
+func TestHtmlEmptyWrap(t *testing.T) {
+	gmi := "do not wrap me up"
+	flavor := Html{}
+	flavor.Wrap("")
+	html := Convert(gmi, &flavor)
+	expect := "<p>do not wrap me up\n"
+	if html != expect {
+		t.Errorf("%s should be %s", html, expect)
+	}
+}
+
+func TestMarkdownWrap(t *testing.T) {
+	gmi := "wrap me up"
+	flavor := Markdown{}
+	flavor.Wrap("```")
+	html := Convert(gmi, &flavor)
+	expect := "```wrap me up\n```"
+	if html != expect {
+		t.Errorf("%s should be %s", html, expect)
+	}
+}
+
+func TestMarkdownEmptyWrap(t *testing.T) {
+	gmi := "do not wrap me up"
+	flavor := Markdown{}
+	flavor.Wrap("")
+	html := Convert(gmi, &flavor)
+	expect := "do not wrap me up\n"
+	if html != expect {
+		t.Errorf("%s should be %s", html, expect)
+	}
+}
+
 func TestHtmlLinkTag(t *testing.T) {
 	flavor := &Html{}
 	flavor.OnLink("photo", func(_, _, _ string) string {

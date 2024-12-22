@@ -35,6 +35,9 @@ func (md *Markdown) OnClose(hook Hook) {
 }
 
 func (md *Markdown) Wrap(s string) {
+	if s == "" {
+		return
+	}
 	md.OnOpen(func() string {
 		return s
 	})
