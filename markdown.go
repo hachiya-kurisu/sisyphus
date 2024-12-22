@@ -7,8 +7,7 @@ import (
 )
 
 type Markdown struct {
-	State   State
-	Current string
+	State State
 
 	LinkHooks map[string]LinkHook
 	QuoteHook QuoteHook

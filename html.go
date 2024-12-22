@@ -12,7 +12,7 @@ func Safe(raw string) string {
 }
 
 type Html struct {
-	Current   string
+	Self      string
 	State     State
 	LinkHooks map[string]LinkHook
 	QuoteHook QuoteHook
@@ -75,10 +75,12 @@ func (html *Html) Header(level int, text string) string {
 }
 
 func (html *Html) Link(url string, text string) string {
+	text, url = Safe(text), Safe(url)
+
 	ext := filepath.Ext(url)
 	hook, ok := html.LinkHooks[ext]
 	if ok {
-		return hook(Safe(url), Safe(text), ext)
+		return hook(url, text, ext)
 	}
 
 	re := regexp.MustCompile(`\((.+)\)$`)
@@ -86,17 +88,17 @@ func (html *Html) Link(url string, text string) string {
 	if len(tag) > 1 {
 		hook, ok := html.LinkHooks[tag[1]]
 		if ok {
-			return hook(Safe(url), Safe(text), ext)
+			return hook(url, text, ext)
 		}
 	}
 
 	if text == "" {
 		text = url
 	}
-	if html.Current == url {
-		return fmt.Sprintf("<a class=x href='%s'>%s</a>", Safe(url), Safe(text))
+	if html.Self == url {
+		return fmt.Sprintf("<a class=self href='%s'>%s</a>", url, text)
 	} else {
-		return fmt.Sprintf("<a href='%s'>%s</a>", Safe(url), Safe(text))
+		return fmt.Sprintf("<a href='%s'>%s</a>", url, text)
 	}
 }
 
