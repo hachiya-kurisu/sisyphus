@@ -30,6 +30,7 @@ func main() {
 		}
 	case "markdown":
 		flavor = &sisyphus.Markdown{}
+		flavor.Wrap(*w)
 	}
 
 	sisyphus.Cook(os.Stdin, os.Stdout, flavor)
