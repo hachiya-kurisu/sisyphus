@@ -75,7 +75,6 @@ func (html *Html) Header(level int, text string) string {
 }
 
 func (html *Html) Link(url string, text string) string {
-	// todo - sjekk suffix for (image)
 	ext := filepath.Ext(url)
 	hook, ok := html.LinkHooks[ext]
 	if ok {
