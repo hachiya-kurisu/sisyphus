@@ -184,3 +184,13 @@ func TestMdQuote(t *testing.T) {
 		t.Errorf("%s should be %s", md, expect)
 	}
 }
+
+func TestGreentext(t *testing.T) {
+	flavor := &Html{Greentext: true}
+	gmi := "> 12435"
+	expect := "<blockquote>\n<p>&gt; 12435\n</blockquote>\n"
+	html := Convert(gmi, flavor)
+	if html != expect {
+		t.Errorf("%s should be %s", html, expect)
+	}
+}

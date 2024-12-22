@@ -18,6 +18,7 @@ type Html struct {
 	QuoteHook QuoteHook
 	OpenHook  Hook
 	CloseHook Hook
+	Greentext bool
 }
 
 var tags = map[State][2]string{
@@ -116,6 +117,9 @@ func (html *Html) Pre(text string) string {
 func (html *Html) Quote(text string) string {
 	if html.QuoteHook != nil {
 		return html.QuoteHook(Safe(text))
+	}
+	if html.Greentext {
+		return html.Text("> " + text)
 	}
 	return html.Text(text)
 }
