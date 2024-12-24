@@ -1,6 +1,9 @@
-package sisyphus
+package sisyphus_test
 
-import "testing"
+import (
+	"blekksprut.net/sisyphus"
+	"testing"
+)
 
 var htmlcases = [][]string{
 	{"text\nanother line\n\n", "<p>text\n<br>another line\n\n"},
@@ -31,7 +34,7 @@ var mdcases = [][]string{
 
 func TestHtml(t *testing.T) {
 	for _, c := range htmlcases {
-		html := Convert(c[0], &Html{})
+		html := sisyphus.Convert(c[0], &sisyphus.Html{})
 		if html != c[1] {
 			t.Errorf("%s should be %s", html, c[1])
 		}
@@ -40,7 +43,7 @@ func TestHtml(t *testing.T) {
 
 func TestMarkdown(t *testing.T) {
 	for _, c := range mdcases {
-		md := Convert(c[0], &Markdown{})
+		md := sisyphus.Convert(c[0], &sisyphus.Markdown{})
 		if md != c[1] {
 			t.Errorf("%s should be %s", md, c[1])
 		}
@@ -48,35 +51,35 @@ func TestMarkdown(t *testing.T) {
 }
 
 func TestCallback(t *testing.T) {
-	flavor := &Markdown{}
+	flavor := &sisyphus.Markdown{}
 	flavor.OnLink(".jpg", func(_, _, _ string) string {
 		return "hijacked!"
 	})
 	gmi := "=> test.jpg"
 	expect := "hijacked!\n"
-	html := Convert(gmi, flavor)
+	html := sisyphus.Convert(gmi, flavor)
 	if html != expect {
 		t.Errorf("%s should be %s", html, expect)
 	}
 }
 
 func TestAspeq(t *testing.T) {
-	flavor := &Html{}
-	flavor.OnLink(".jpg", Aspeq(".", false))
+	flavor := &sisyphus.Html{}
+	flavor.OnLink(".jpg", sisyphus.Aspeq(".", false))
 	gmi := "=> ume.jpg 梅ちゃん"
 	expect := "<p><img src='ume.jpg' class=super16 alt='梅ちゃん'>\n"
-	html := Convert(gmi, flavor)
+	html := sisyphus.Convert(gmi, flavor)
 	if html != expect {
 		t.Errorf("%s should be %s", html, expect)
 	}
 }
 
 func TestAspeqMissing(t *testing.T) {
-	flavor := &Html{}
-	flavor.OnLink(".jpg", Aspeq(".", true))
+	flavor := &sisyphus.Html{}
+	flavor.OnLink(".jpg", sisyphus.Aspeq(".", true))
 	gmi := "=> notfound.jpg"
 	expect := "<p><img src='notfound.jpg' class=unknown alt=''>\n"
-	html := Convert(gmi, flavor)
+	html := sisyphus.Convert(gmi, flavor)
 	if html != expect {
 		t.Errorf("%s should be %s", html, expect)
 	}
@@ -84,7 +87,7 @@ func TestAspeqMissing(t *testing.T) {
 
 func TestSelf(t *testing.T) {
 	gmi := "=> /here a link"
-	html := Convert(gmi, &Html{Self: "/here"})
+	html := sisyphus.Convert(gmi, &sisyphus.Html{Self: "/here"})
 	expect := "<p><a class=self href='/here'>a link</a>\n"
 	if html != expect {
 		t.Errorf("%s should be %s", html, expect)
@@ -93,9 +96,9 @@ func TestSelf(t *testing.T) {
 
 func TestHtmlWrap(t *testing.T) {
 	gmi := "wrap me up"
-	flavor := Html{}
+	flavor := sisyphus.Html{}
 	flavor.Wrap("article")
-	html := Convert(gmi, &flavor)
+	html := sisyphus.Convert(gmi, &flavor)
 	expect := "<article>\n<p>wrap me up\n</article>\n"
 	if html != expect {
 		t.Errorf("%s should be %s", html, expect)
@@ -104,9 +107,9 @@ func TestHtmlWrap(t *testing.T) {
 
 func TestHtmlEmptyWrap(t *testing.T) {
 	gmi := "do not wrap me up"
-	flavor := Html{}
+	flavor := sisyphus.Html{}
 	flavor.Wrap("")
-	html := Convert(gmi, &flavor)
+	html := sisyphus.Convert(gmi, &flavor)
 	expect := "<p>do not wrap me up\n"
 	if html != expect {
 		t.Errorf("%s should be %s", html, expect)
@@ -115,9 +118,9 @@ func TestHtmlEmptyWrap(t *testing.T) {
 
 func TestMarkdownWrap(t *testing.T) {
 	gmi := "wrap me up"
-	flavor := Markdown{}
+	flavor := sisyphus.Markdown{}
 	flavor.Wrap("```")
-	html := Convert(gmi, &flavor)
+	html := sisyphus.Convert(gmi, &flavor)
 	expect := "```wrap me up\n```"
 	if html != expect {
 		t.Errorf("%s should be %s", html, expect)
@@ -126,9 +129,9 @@ func TestMarkdownWrap(t *testing.T) {
 
 func TestMarkdownEmptyWrap(t *testing.T) {
 	gmi := "do not wrap me up"
-	flavor := Markdown{}
+	flavor := sisyphus.Markdown{}
 	flavor.Wrap("")
-	html := Convert(gmi, &flavor)
+	html := sisyphus.Convert(gmi, &flavor)
 	expect := "do not wrap me up\n"
 	if html != expect {
 		t.Errorf("%s should be %s", html, expect)
@@ -136,26 +139,26 @@ func TestMarkdownEmptyWrap(t *testing.T) {
 }
 
 func TestHtmlLinkTag(t *testing.T) {
-	flavor := &Html{}
+	flavor := &sisyphus.Html{}
 	flavor.OnLink("photo", func(_, _, _ string) string {
 		return "!"
 	})
 	gmi := "=> test.jpg (photo)"
 	expect := "<p>!\n"
-	html := Convert(gmi, flavor)
+	html := sisyphus.Convert(gmi, flavor)
 	if html != expect {
 		t.Errorf("%s should be %s", html, expect)
 	}
 }
 
 func TestHtmlQuote(t *testing.T) {
-	flavor := &Html{}
+	flavor := &sisyphus.Html{}
 	flavor.OnQuote(func(_ string) string {
 		return "!"
 	})
 	gmi := ">>12435"
 	expect := "<blockquote>\n<p>!\n</blockquote>\n"
-	html := Convert(gmi, flavor)
+	html := sisyphus.Convert(gmi, flavor)
 	if html != expect {
 		t.Errorf("%s should be %s", html, expect)
 	}
@@ -163,9 +166,9 @@ func TestHtmlQuote(t *testing.T) {
 
 func TestMdWrap(t *testing.T) {
 	gmi := "wrap me up"
-	flavor := Markdown{}
+	flavor := sisyphus.Markdown{}
 	flavor.Wrap("*")
-	md := Convert(gmi, &flavor)
+	md := sisyphus.Convert(gmi, &flavor)
 	expect := "*wrap me up\n*"
 	if md != expect {
 		t.Errorf("%s should be %s", md, expect)
@@ -173,33 +176,33 @@ func TestMdWrap(t *testing.T) {
 }
 
 func TestMdQuote(t *testing.T) {
-	flavor := &Markdown{}
+	flavor := &sisyphus.Markdown{}
 	flavor.OnQuote(func(_ string) string {
 		return "!"
 	})
 	gmi := ">>12435"
 	expect := "!\n"
-	md := Convert(gmi, flavor)
+	md := sisyphus.Convert(gmi, flavor)
 	if md != expect {
 		t.Errorf("%s should be %s", md, expect)
 	}
 }
 
 func TestGreentext(t *testing.T) {
-	flavor := &Html{Greentext: true}
+	flavor := &sisyphus.Html{Greentext: true}
 	gmi := "> 12435"
 	expect := "<blockquote>\n<p>&gt; 12435\n</blockquote>\n"
-	html := Convert(gmi, flavor)
+	html := sisyphus.Convert(gmi, flavor)
 	if html != expect {
 		t.Errorf("%s should be %s", html, expect)
 	}
 }
 
 func TestGreentextLink(t *testing.T) {
-	flavor := &Html{Greentext: true}
+	flavor := &sisyphus.Html{Greentext: true}
 	gmi := "=> / a link"
 	expect := "<p><a href='/'>=&gt; a link</a>\n"
-	html := Convert(gmi, flavor)
+	html := sisyphus.Convert(gmi, flavor)
 	if html != expect {
 		t.Errorf("%s should be %s", html, expect)
 	}
