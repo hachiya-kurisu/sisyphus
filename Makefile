@@ -18,6 +18,10 @@ push:
 fmt:
 	gofmt -s -w *.go cmd/*/*.go
 
+cover:
+	go test -coverprofile=cover.out
+	go tool cover -html cover.out
+
 doc: README.md
 
 README.md: README.gmi

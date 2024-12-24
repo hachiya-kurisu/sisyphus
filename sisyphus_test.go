@@ -194,3 +194,13 @@ func TestGreentext(t *testing.T) {
 		t.Errorf("%s should be %s", html, expect)
 	}
 }
+
+func TestGreentextLink(t *testing.T) {
+	flavor := &Html{Greentext: true}
+	gmi := "=> / a link"
+	expect := "<p><a href='/'>=&gt; a link</a>\n"
+	html := Convert(gmi, flavor)
+	if html != expect {
+		t.Errorf("%s should be %s", html, expect)
+	}
+}
