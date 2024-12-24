@@ -16,8 +16,7 @@ push:
 	git push github
 
 fmt:
-	gofmt -s -w *.go
-	gofmt -s -w cmd/sisyphus/main.go
+	gofmt -s -w *.go cmd/*/*.go
 
 doc: README.md
 
