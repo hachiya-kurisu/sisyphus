@@ -9,10 +9,11 @@ import (
 
 func main() {
 	v := flag.Bool("v", false, "version")
-	a := flag.String("a", "", "aspeq prefix (empty string disables aspeq)")
 	f := flag.String("f", "html", "flavor (html/markdown)")
-	w := flag.String("w", "", "wrap output in tag")
+	w := flag.String("w", "", "wrap output")
 	s := flag.String("s", "", "url of current page")
+	a := flag.String("a", "", "aspeq prefix (html only)")
+	g := flag.Bool("g", false, "greentext mode (html only)")
 	flag.Parse()
 
 	if *v {
@@ -23,7 +24,7 @@ func main() {
 	var flavor sisyphus.Flavor
 	switch *f {
 	case "html":
-		flavor = &sisyphus.Html{Self: *s}
+		flavor = &sisyphus.Html{Self: *s, Greentext: *g}
 		flavor.Wrap(*w)
 		if *a != "" {
 			flavor.OnLink(".jpg", sisyphus.Aspeq(*a, false))

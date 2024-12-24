@@ -79,6 +79,9 @@ func (html *Html) Header(level int, text string) string {
 }
 
 func (html *Html) Link(url string, text string) string {
+	if html.Greentext {
+		text = "=> " + text
+	}
 	text, url = Safe(text), Safe(url)
 
 	ext := filepath.Ext(url)
