@@ -4,6 +4,18 @@ convert gemtext to html/markdown
 
 (api, interfaces, cli tool - everything is likely to change drastically 😂
 
+## installation
+
+### arch linux
+
+[sisyphus](https://aur.archlinux.org/packages/sisyphus)
+is available as a package in the AUR
+
+it can be installed with an AUR helper (e.g. yay):
+```
+$ yay -S sisyphus
+```
+
 ## cli usage
 
 create a markdown readme from gemtext:
