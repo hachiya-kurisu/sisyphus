@@ -24,8 +24,8 @@ cover:
 
 doc: README.md
 
-README.md: README.gmi
-	./sisyphus -f markdown <README.gmi >README.md
+README.md: README.gmi INSTALL.gmi
+	cat README.gmi INSTALL.gmi | sisyphus -f markdown > README.md
 
 release: push
 	git push github --tags
