@@ -1,5 +1,11 @@
 ## installation
 
+### go
+
+```
+go install blekksprut.net/sisyphus/cmd/sisyphus@latest
+```
+
 ### arch linux
 
 => https://aur.archlinux.org/packages/sisyphus sisyphus

@@ -35,6 +35,12 @@ flavor.OnLink(".jpg", hook)
 
 ## installation
 
+### go
+
+```
+go install blekksprut.net/sisyphus/cmd/sisyphus@latest
+```
+
 ### arch linux
 
 [sisyphus](https://aur.archlinux.org/packages/sisyphus)
