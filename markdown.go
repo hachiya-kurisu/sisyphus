@@ -2,6 +2,7 @@ package sisyphus
 
 import (
 	"fmt"
+	"net/url"
 	"path/filepath"
 	"strings"
 )
@@ -114,4 +115,15 @@ func (md *Markdown) SetState(state State) string {
 	}
 	md.State = state
 	return closing + opening
+}
+
+func (md *Markdown) Aspeq(prefix string, useBase bool) LinkHook {
+	return func(uri, text, suffix string) string {
+		parsed, err := url.Parse(uri)
+		format := "![%s](%s)"
+		if err == nil && !parsed.IsAbs() && useBase {
+			uri = filepath.Base(uri)
+		}
+		return fmt.Sprintf(format, uri, text)
+	}
 }

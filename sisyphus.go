@@ -1,13 +1,10 @@
 package sisyphus
 
 import (
-	"blekksprut.net/aspeq"
 	"bufio"
 	"bytes"
 	"fmt"
 	"io"
-	"net/url"
-	"path/filepath"
 	"strings"
 )
 
@@ -20,9 +17,9 @@ type Hook func() string
 type Flavor interface {
 	Open() string
 	Close() string
+	ListItem(string) string
 	Header(int, string) string
 	Link(string, string) string
-	ListItem(string) string
 	Pre(string) string
 	Quote(string) string
 	Text(string) string
@@ -35,6 +32,7 @@ type Flavor interface {
 	OnOpen(Hook)
 	OnClose(Hook)
 
+	Aspeq(string, bool) LinkHook
 	Wrap(string)
 }
 
@@ -47,24 +45,6 @@ const (
 	Pre
 	Quote
 )
-
-func Aspeq(prefix string, useBase bool) LinkHook {
-	return func(uri, text, suffix string) string {
-		parsed, err := url.Parse(uri)
-		format := "<img src='%s' class=%s alt='%s'>"
-		if err == nil && !parsed.IsAbs() {
-			if useBase {
-				uri = filepath.Base(uri)
-			}
-			path := fmt.Sprintf("%s/%s", prefix, uri)
-			ar, err := aspeq.FromImage(path)
-			if err == nil {
-				return fmt.Sprintf(format, uri, ar.Name, text)
-			}
-		}
-		return fmt.Sprintf(format, uri, "unknown", text)
-	}
-}
 
 func Convert(gmi string, flavor Flavor) string {
 	rd := strings.NewReader(gmi)

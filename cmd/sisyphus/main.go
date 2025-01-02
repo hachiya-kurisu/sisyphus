@@ -25,13 +25,13 @@ func main() {
 	switch *f {
 	case "html":
 		flavor = &sisyphus.Html{Self: *s, Greentext: *g}
-		flavor.Wrap(*w)
-		if *a != "" {
-			flavor.OnLink(".jpg", sisyphus.Aspeq(*a, false))
-		}
 	case "markdown":
 		flavor = &sisyphus.Markdown{}
-		flavor.Wrap(*w)
+	}
+
+	flavor.Wrap(*w)
+	if *a != "" {
+		flavor.OnLink(".jpg", flavor.Aspeq(*a, false))
 	}
 
 	sisyphus.Cook(os.Stdin, os.Stdout, flavor)

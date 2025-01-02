@@ -65,7 +65,7 @@ func TestCallback(t *testing.T) {
 
 func TestAspeq(t *testing.T) {
 	flavor := &sisyphus.Html{}
-	flavor.OnLink(".jpg", sisyphus.Aspeq(".", false))
+	flavor.OnLink(".jpg", flavor.Aspeq(".", false))
 	gmi := "=> ume.jpg 梅ちゃん"
 	expect := "<p><img src='ume.jpg' class=super16 alt='梅ちゃん'>\n"
 	html := sisyphus.Convert(gmi, flavor)
@@ -76,9 +76,20 @@ func TestAspeq(t *testing.T) {
 
 func TestAspeqMissing(t *testing.T) {
 	flavor := &sisyphus.Html{}
-	flavor.OnLink(".jpg", sisyphus.Aspeq(".", true))
+	flavor.OnLink(".jpg", flavor.Aspeq(".", true))
 	gmi := "=> notfound.jpg"
 	expect := "<p><img src='notfound.jpg' class=unknown alt=''>\n"
+	html := sisyphus.Convert(gmi, flavor)
+	if html != expect {
+		t.Errorf("%s should be %s", html, expect)
+	}
+}
+
+func TestMarkdownAspeq(t *testing.T) {
+	flavor := &sisyphus.Markdown{}
+	flavor.OnLink(".jpg", flavor.Aspeq(".", true))
+	gmi := "=> ume.jpg 梅ちゃん"
+	expect := "![ume.jpg](梅ちゃん)\n"
 	html := sisyphus.Convert(gmi, flavor)
 	if html != expect {
 		t.Errorf("%s should be %s", html, expect)

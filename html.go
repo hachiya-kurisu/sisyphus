@@ -1,8 +1,10 @@
 package sisyphus
 
 import (
+	"blekksprut.net/aspeq"
 	"fmt"
 	"html"
+	"net/url"
 	"path/filepath"
 	"regexp"
 )
@@ -146,4 +148,23 @@ func (html *Html) SetState(state State) string {
 	opening := tags[state][0]
 	html.State = state
 	return closing + opening
+}
+
+func (html *Html) Aspeq(prefix string, useBase bool) LinkHook {
+	return func(uri, text, suffix string) string {
+		parsed, err := url.Parse(uri)
+		format := "<img src='%s' class=%s alt='%s'>"
+		// format := "![%s](%s)"
+		if err == nil && !parsed.IsAbs() {
+			if useBase {
+				uri = filepath.Base(uri)
+			}
+			path := fmt.Sprintf("%s/%s", prefix, uri)
+			ar, err := aspeq.FromImage(path)
+			if err == nil {
+				return fmt.Sprintf(format, uri, ar.Name, text)
+			}
+		}
+		return fmt.Sprintf(format, uri, "unknown", text)
+	}
 }
