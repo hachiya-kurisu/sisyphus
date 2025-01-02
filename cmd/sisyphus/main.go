@@ -27,11 +27,16 @@ func main() {
 		flavor = &sisyphus.Html{Self: *s, Greentext: *g}
 	case "markdown":
 		flavor = &sisyphus.Markdown{}
+	default:
+		fmt.Fprintln(os.Stderr, "unknown flavor")
+		os.Exit(1)
 	}
 
 	flavor.Wrap(*w)
 	if *a != "" {
 		flavor.OnLink(".jpg", flavor.Aspeq(*a, false))
+		flavor.OnLink(".gif", flavor.Aspeq(*a, false))
+		flavor.OnLink(".png", flavor.Aspeq(*a, false))
 	}
 
 	sisyphus.Cook(os.Stdin, os.Stdout, flavor)
