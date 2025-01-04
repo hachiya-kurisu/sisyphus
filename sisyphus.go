@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-const Version = "0.3.8"
+const Version = "0.3.9"
 
 type LinkHook func(uri string, text string, match string) string
 type QuoteHook func(text string) string
