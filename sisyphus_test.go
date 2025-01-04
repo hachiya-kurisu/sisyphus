@@ -89,7 +89,7 @@ func TestMarkdownAspeq(t *testing.T) {
 	flavor := &sisyphus.Markdown{}
 	flavor.OnLink(".jpg", flavor.Aspeq(".", true))
 	gmi := "=> ume.jpg 梅ちゃん"
-	expect := "![ume.jpg](梅ちゃん)\n"
+	expect := "![梅ちゃん](ume.jpg)\n"
 	html := sisyphus.Convert(gmi, flavor)
 	if html != expect {
 		t.Errorf("%s should be %s", html, expect)

@@ -124,6 +124,6 @@ func (md *Markdown) Aspeq(prefix string, useBase bool) LinkHook {
 		if err == nil && !parsed.IsAbs() && useBase {
 			uri = filepath.Base(uri)
 		}
-		return fmt.Sprintf(format, uri, text)
+		return fmt.Sprintf(format, text, uri)
 	}
 }
