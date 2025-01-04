@@ -99,7 +99,7 @@ func TestMarkdownAspeq(t *testing.T) {
 func TestSelf(t *testing.T) {
 	gmi := "=> /here a link"
 	html := sisyphus.Convert(gmi, &sisyphus.Html{Self: "/here"})
-	expect := "<p><a class=self href='/here'>a link</a>\n"
+	expect := "<p><a data-friendly class=self href='/here'>a link</a>\n"
 	if html != expect {
 		t.Errorf("%s should be %s", html, expect)
 	}
@@ -212,7 +212,7 @@ func TestGreentext(t *testing.T) {
 func TestGreentextLink(t *testing.T) {
 	flavor := &sisyphus.Html{Greentext: true}
 	gmi := "=> / a link"
-	expect := "<p><a href='/'>=&gt; a link</a>\n"
+	expect := "<p><a data-friendly href='/'>=&gt; a link</a>\n"
 	html := sisyphus.Convert(gmi, flavor)
 	if html != expect {
 		t.Errorf("%s should be %s", html, expect)
