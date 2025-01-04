@@ -101,13 +101,15 @@ func (html *Html) Link(url string, text string) string {
 		}
 	}
 
+	attrs := "data-friendly "
 	if text == "" {
 		text = url
+		attrs = ""
 	}
 	if html.Self == url {
-		return fmt.Sprintf("<a class=self href='%s'>%s</a>", url, text)
+		return fmt.Sprintf("<a %sclass=self href='%s'>%s</a>", attrs, url, text)
 	} else {
-		return fmt.Sprintf("<a href='%s'>%s</a>", url, text)
+		return fmt.Sprintf("<a %shref='%s'>%s</a>", attrs, url, text)
 	}
 }
 
