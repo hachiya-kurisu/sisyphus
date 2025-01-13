@@ -1,8 +1,9 @@
 package sisyphus_test
 
 import (
-	"blekksprut.net/sisyphus"
 	"testing"
+
+	"blekksprut.net/sisyphus"
 )
 
 var htmlcases = [][]string{

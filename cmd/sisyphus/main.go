@@ -1,10 +1,11 @@
 package main
 
 import (
-	"blekksprut.net/sisyphus"
 	"flag"
 	"fmt"
 	"os"
+
+	"blekksprut.net/sisyphus"
 )
 
 func main() {

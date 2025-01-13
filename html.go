@@ -1,12 +1,13 @@
 package sisyphus
 
 import (
-	"blekksprut.net/aspeq"
 	"fmt"
 	"html"
 	"net/url"
 	"path/filepath"
 	"regexp"
+
+	"blekksprut.net/aspeq"
 )
 
 func Safe(raw string) string {
@@ -156,7 +157,6 @@ func (html *Html) Aspeq(prefix string, useBase bool) LinkHook {
 	return func(uri, text, suffix string) string {
 		parsed, err := url.Parse(uri)
 		format := "<img src='%s' class=%s alt='%s'>"
-		// format := "![%s](%s)"
 		if err == nil && !parsed.IsAbs() {
 			if useBase {
 				uri = filepath.Base(uri)
