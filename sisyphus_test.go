@@ -14,6 +14,7 @@ var htmlcases = [][]string{
 	{"* list", "<ul>\n<li>list\n</ul>\n"},
 	{"* 1\n> 2", "<ul>\n<li>1\n</ul>\n<blockquote>\n<p>2\n</blockquote>\n"},
 	{"=> link", "<p><a href='link'>link</a>\n"},
+	{"=> link\tok ok", "<p><a data-friendly href='link'>ok ok</a>\n"},
 	{"> hello\n> hm", "<blockquote>\n<p>hello\n<br>hm\n</blockquote>\n"},
 	{"> hello\nhm", "<blockquote>\n<p>hello\n</blockquote>\n<p>hm\n"},
 	{"```\npre", "<pre>pre\n</pre>\n"},

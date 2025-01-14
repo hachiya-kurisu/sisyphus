@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"regexp"
 	"strings"
 )
 
@@ -86,9 +87,14 @@ func Cook(r io.Reader, w io.Writer, flavor Flavor) {
 			fmt.Fprintf(w, flavor.Header(1, raw))
 		case strings.HasPrefix(line, "=>"):
 			link := strings.TrimSpace(strings.TrimPrefix(line, "=>"))
-			url, text, _ := strings.Cut(link, " ")
+			s := regexp.MustCompile("[[:space:]]+").Split(link, 2)
 			fmt.Fprintf(w, flavor.SetState(Text))
-			fmt.Fprintln(w, flavor.Link(url, strings.TrimSpace(text)))
+			switch len(s) {
+			case 1:
+				fmt.Fprintln(w, flavor.Link(s[0], ""))
+			case 2:
+				fmt.Fprintln(w, flavor.Link(s[0], strings.TrimSpace(s[1])))
+			}
 		case strings.TrimSpace(line) == "":
 			fmt.Fprintf(w, flavor.SetState(None))
 			fmt.Fprintln(w, "")
