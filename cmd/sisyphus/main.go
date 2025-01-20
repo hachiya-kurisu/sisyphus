@@ -28,8 +28,6 @@ func main() {
 		flavor = &sisyphus.Html{Self: *s, Greentext: *g}
 	case "markdown":
 		flavor = &sisyphus.Markdown{}
-	case "gin":
-		flavor = &sisyphus.Gin{}
 	default:
 		fmt.Fprintln(os.Stderr, "unknown flavor")
 		os.Exit(1)
