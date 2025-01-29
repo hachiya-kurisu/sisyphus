@@ -108,6 +108,8 @@ func (md *Markdown) SetState(state State) string {
 	switch md.State {
 	case Pre:
 		closing = "```\n"
+	case Quote:
+		closing = "\n"
 	}
 	switch state {
 	case Pre:

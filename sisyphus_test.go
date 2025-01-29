@@ -27,10 +27,10 @@ var mdcases = [][]string{
 	{"## header", "## header\n"},
 	{"### header", "### header\n"},
 	{"* list", "* list\n"},
-	{"* 1\n> 2", "* 1\n> 2\n"},
+	{"* 1\n> 2", "* 1\n> 2\n\n"},
 	{"=> link", "[link](link)\n"},
-	{"> hello\n> hm", "> hello\n> hm\n"},
-	{"> hello\nhm", "> hello\nhm\n"},
+	{"> hello\n> hm", "> hello\n> hm\n\n"},
+	{"> hello\nhm", "> hello\n\nhm\n"},
 	{"```\npre", "```\npre\n```\n"},
 }
 
@@ -194,7 +194,7 @@ func TestMdQuote(t *testing.T) {
 		return "!"
 	})
 	gmi := ">>12435"
-	expect := "!\n"
+	expect := "!\n\n"
 	md := sisyphus.Convert(gmi, flavor)
 	if md != expect {
 		t.Errorf("%s should be %s", md, expect)
