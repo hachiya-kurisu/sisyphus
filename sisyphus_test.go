@@ -220,3 +220,16 @@ func TestGreentextLink(t *testing.T) {
 		t.Errorf("%s should be %s", html, expect)
 	}
 }
+
+func TestEmptyLink(t *testing.T) {
+	flavor := &sisyphus.Html{}
+	flavor.OnLink(".jpg", func(ln, text, suffix string) string {
+		return ""
+	})
+	gmi := "=> test.jpg"
+	html := sisyphus.Convert(gmi, flavor)
+	expect := ""
+	if html != expect {
+		t.Errorf("%s should be %s", html, expect)
+	}
+}

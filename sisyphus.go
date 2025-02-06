@@ -88,12 +88,16 @@ func Cook(r io.Reader, w io.Writer, flavor Flavor) {
 		case strings.HasPrefix(line, "=>"):
 			link := strings.TrimSpace(strings.TrimPrefix(line, "=>"))
 			s := regexp.MustCompile("[[:space:]]+").Split(link, 2)
-			fmt.Fprintf(w, flavor.SetState(Text))
+			var ln string
 			switch len(s) {
 			case 1:
-				fmt.Fprintln(w, flavor.Link(s[0], ""))
+				ln = flavor.Link(s[0], "")
 			case 2:
-				fmt.Fprintln(w, flavor.Link(s[0], strings.TrimSpace(s[1])))
+				ln = flavor.Link(s[0], strings.TrimSpace(s[1]))
+			}
+			if ln != "" {
+				fmt.Fprintf(w, flavor.SetState(Text))
+				fmt.Fprintln(w, ln)
 			}
 		case strings.TrimSpace(line) == "":
 			fmt.Fprintf(w, flavor.SetState(None))
