@@ -162,7 +162,7 @@ func (html *Html) Aspeq(prefix string, useBase bool) LinkHook {
 				uri = filepath.Base(uri)
 			}
 			path := fmt.Sprintf("%s/%s", prefix, uri)
-			ar, err := aspeq.FromImage(path)
+			ar, err := aspeq.FromPath(path)
 			if err == nil {
 				return fmt.Sprintf(format, uri, ar.Name, text)
 			}

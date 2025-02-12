@@ -55,36 +55,36 @@ func Convert(gmi string, flavor Flavor) string {
 }
 
 func Cook(r io.Reader, w io.Writer, flavor Flavor) {
-	fmt.Fprintf(w, flavor.Open())
+	fmt.Fprintf(w, "%s", flavor.Open())
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
 		line := scanner.Text()
 		switch {
 		case strings.HasPrefix(line, "```"):
 			if flavor.GetState() == Pre {
-				fmt.Fprintf(w, flavor.SetState(None))
+				fmt.Fprintf(w, "%s", flavor.SetState(None))
 			} else {
-				fmt.Fprintf(w, flavor.SetState(Pre))
+				fmt.Fprintf(w, "%s", flavor.SetState(Pre))
 			}
 		case flavor.GetState() == Pre:
 			fmt.Fprintln(w, flavor.Pre(line))
 		case strings.HasPrefix(line, "* "):
-			fmt.Fprintf(w, flavor.SetState(List))
+			fmt.Fprintf(w, "%s", flavor.SetState(List))
 			raw := strings.TrimSpace(strings.TrimPrefix(line, "*"))
-			fmt.Fprintf(w, flavor.ListItem(raw))
+			fmt.Fprintf(w, "%s", flavor.ListItem(raw))
 		case strings.HasPrefix(line, ">"):
-			fmt.Fprintf(w, flavor.SetState(Quote))
+			fmt.Fprintf(w, "%s", flavor.SetState(Quote))
 			raw := strings.TrimSpace(strings.TrimPrefix(line, ">"))
 			fmt.Fprintln(w, flavor.Quote(raw))
 		case strings.HasPrefix(line, "###"):
 			raw := strings.TrimSpace(strings.TrimPrefix(line, "###"))
-			fmt.Fprintf(w, flavor.Header(3, raw))
+			fmt.Fprintf(w, "%s", flavor.Header(3, raw))
 		case strings.HasPrefix(line, "##"):
 			raw := strings.TrimSpace(strings.TrimPrefix(line, "##"))
-			fmt.Fprintf(w, flavor.Header(2, raw))
+			fmt.Fprintf(w, "%s", flavor.Header(2, raw))
 		case strings.HasPrefix(line, "#"):
 			raw := strings.TrimSpace(strings.TrimPrefix(line, "#"))
-			fmt.Fprintf(w, flavor.Header(1, raw))
+			fmt.Fprintf(w, "%s", flavor.Header(1, raw))
 		case strings.HasPrefix(line, "=>"):
 			link := strings.TrimSpace(strings.TrimPrefix(line, "=>"))
 			s := regexp.MustCompile("[[:space:]]+").Split(link, 2)
@@ -96,17 +96,17 @@ func Cook(r io.Reader, w io.Writer, flavor Flavor) {
 				ln = flavor.Link(s[0], strings.TrimSpace(s[1]))
 			}
 			if ln != "" {
-				fmt.Fprintf(w, flavor.SetState(Text))
+				fmt.Fprintf(w, "%s", flavor.SetState(Text))
 				fmt.Fprintln(w, ln)
 			}
 		case strings.TrimSpace(line) == "":
-			fmt.Fprintf(w, flavor.SetState(None))
+			fmt.Fprintf(w, "%s", flavor.SetState(None))
 			fmt.Fprintln(w, "")
 		default:
-			fmt.Fprintf(w, flavor.SetState(Text))
+			fmt.Fprintf(w, "%s", flavor.SetState(Text))
 			fmt.Fprintln(w, flavor.Text(line))
 		}
 	}
-	fmt.Fprintf(w, flavor.SetState(None))
-	fmt.Fprintf(w, flavor.Close())
+	fmt.Fprintf(w, "%s", flavor.SetState(None))
+	fmt.Fprintf(w, "%s", flavor.Close())
 }
