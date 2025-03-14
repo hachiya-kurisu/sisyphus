@@ -19,6 +19,7 @@ var htmlcases = [][]string{
 	{"> hello\nhm", "<blockquote>\n<p>hello\n</blockquote>\n<p>hm\n"},
 	{"```\npre", "<pre>pre\n</pre>\n"},
 	{"```\npre\n```", "<pre>pre\n</pre>\n"},
+	{"* li\n# header", "<ul>\n<li>li\n</ul>\n<h1>header</h1>\n"},
 }
 
 var mdcases = [][]string{

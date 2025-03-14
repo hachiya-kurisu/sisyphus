@@ -77,12 +77,15 @@ func Cook(r io.Reader, w io.Writer, flavor Flavor) {
 			raw := strings.TrimSpace(strings.TrimPrefix(line, ">"))
 			fmt.Fprintln(w, flavor.Quote(raw))
 		case strings.HasPrefix(line, "###"):
+			fmt.Fprintf(w, "%s", flavor.SetState(None))
 			raw := strings.TrimSpace(strings.TrimPrefix(line, "###"))
 			fmt.Fprintf(w, "%s", flavor.Header(3, raw))
 		case strings.HasPrefix(line, "##"):
+			fmt.Fprintf(w, "%s", flavor.SetState(None))
 			raw := strings.TrimSpace(strings.TrimPrefix(line, "##"))
 			fmt.Fprintf(w, "%s", flavor.Header(2, raw))
 		case strings.HasPrefix(line, "#"):
+			fmt.Fprintf(w, "%s", flavor.SetState(None))
 			raw := strings.TrimSpace(strings.TrimPrefix(line, "#"))
 			fmt.Fprintf(w, "%s", flavor.Header(1, raw))
 		case strings.HasPrefix(line, "=>"):
