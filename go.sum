@@ -1,4 +1,4 @@
-blekksprut.net/aspeq v0.4.1 h1:uLo4wl3fQfxUtEzgzPjR9XRS0V7761KyFRV4Ti81rwA=
-blekksprut.net/aspeq v0.4.1/go.mod h1:a+bA04Fxu1tN6sb6wygNKJvk32So3TauAX8UHdhmgt4=
+blekksprut.net/aspeq v0.5.0 h1:QjcMLnWXu98bq6EW01RUuYJclt8BWnLzYYh6PSW3lhw=
+blekksprut.net/aspeq v0.5.0/go.mod h1:Jm72njuM27zuY7oRhL/uq9I0ZCwP4h2Xa1UBng/I8UA=
 golang.org/x/image v0.27.0 h1:C8gA4oWU/tKkdCfYT6T2u4faJu3MeNS5O8UPWlPF61w=
 golang.org/x/image v0.27.0/go.mod h1:xbdrClrAUway1MUTEZDq9mz/UpRwYAkFFNUslZtcB+g=
