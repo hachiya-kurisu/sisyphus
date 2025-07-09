@@ -33,6 +33,9 @@ flavor := &sisyphus.Html{}
 flavor.OnLink(".jpg", hook)
 ```
 
+## author
+
+[蜂谷栗栖](https://blekksprut.net/)
 ## installation
 
 ### go
