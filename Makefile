@@ -24,6 +24,9 @@ cover:
 
 doc: README.md
 
+dead:
+	deadcode -test ./...
+
 README.md: README.gmi INSTALL.gmi
 	cat README.gmi INSTALL.gmi | sisyphus -f markdown > README.md
 
