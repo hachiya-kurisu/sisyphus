@@ -4,4 +4,4 @@ go 1.25.4
 
 require blekksprut.net/aspeq v0.6.0
 
-require golang.org/x/image v0.36.0 // indirect
+require golang.org/x/image v0.39.0 // indirect
